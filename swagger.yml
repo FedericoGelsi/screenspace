@@ -15,6 +15,8 @@ tags:
     description: User access management
   - name: theatre
     description: Movie theatre management
+  - name: movie
+    description: Movies
 paths:
   /api/v1/users:
     post:
@@ -392,38 +394,163 @@ paths:
           description: Bad request
         '500':
           description: Server error while processing the request
-  
+  /api/v1/movies:
+    get:
+      tags:
+        - movie
+      summary: Get all movies
+      description: Retrieves a list of all movies.
+      operationId: getMovies
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Movie'
+        '404':
+          description: Movies not found.
+        '500':
+          description: Server error while processing the request 
+    post:
+      tags:
+        - movie
+      summary: Create a new movie
+      description: Creates a new movie with the details provided.
+      operationId: createMovie
+      requestBody:
+        description: Created movie object
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/MovieRequest'
+      responses:
+        '201':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Movie'
+        '404':
+          description: Bad request
+        '500':
+          description: Server error while processing the request 
+  /api/v1/movies/{movieId}/review:
+    post:
+      tags:
+        - movie
+      summary: Create a movie review
+      description: Allows users to submit a review for a specific movie.
+      operationId: reviewMovie
+      parameters:
+        - name: movieId
+          in: path
+          description: ID of the movie
+          required: true
+          schema:
+            type: integer
+            format: int64
+      requestBody:
+        description: Created review object
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ReviewMovieRequest'
+      responses:
+        '201':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ReviewMovie'
+        '400':
+          description: User not found        
+        '404':
+          description: Bad request
+        '500':
+          description: Server error while processing the request 
+  /api/v1/movies/{movieId}:
+    get:
+      tags:
+        - movie
+      summary: Get movie by ID
+      description: Retrieves a specific movie by its ID.
+      operationId: getMovieById
+      parameters:
+        - name: movieId
+          in: path
+          description: ID of the movie to retrieve.
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MovieDetail'
+        '404':
+          description: Movie not found.
+        '500':
+          description: Server error while processing the request
+    put:
+      tags:
+        - movie
+      summary: Update movie by ID
+      description: Updates a specific movie by its ID.
+      operationId: updateMovieById
+      parameters:
+        - name: movieId
+          in: path
+          description: ID of the movie to update.
+          required: true
+          schema:
+            type: integer
+            format: int64
+      requestBody:
+        description: Optional parameters to modify movie information.
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/MovieRequest'
+      responses:
+        '200':
+          description: The movie has been successfully updated
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Movie'
+        '404':
+          description: Movie not found.
+        '500':
+          description: Server error while processing the request
+    delete:
+      tags:
+        - movie
+      summary: Delete movie by ID
+      description: Deletes a specific movie by its ID.
+      operationId: deleteMovieById
+      parameters:
+        - name: movieId
+          in: path
+          description: ID of the movie to delete.
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        '204':
+          description: The movie has been successfully deleted
+        '404':
+          description: Movie not found.
+        '500':
+          description: Server error while processing the request
 components:
   schemas:
-    Address:
-      type: object
-      properties:
-        street:
-          type: string
-          example: 437 Lytton
-        city:
-          type: string
-          example: Palo Alto
-        state:
-          type: string
-          example: CA
-        zip:
-          type: string
-          example: '94301'
-      xml:
-        name: address
-    Category:
-      type: object
-      properties:
-        id:
-          type: integer
-          format: int64
-          example: 1
-        name:
-          type: string
-          example: Dogs
-      xml:
-        name: category
     User:
       type: object
       properties:
@@ -668,7 +795,122 @@ components:
         avatar:
           type: string
           example: www.imageExample.com/ndasud72363
-
+    Movie:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+          example: 1
+        title:
+          type: string
+          example: 'The Godfather'
+        image:
+          type: string
+          example: 'https://example.com/images/the_godfather.jpg'
+        genre:
+          type: string
+          example: 'Crime, Drama'
+        synopsis:
+          type: string
+          example: 'The aging patriarch of an organized crime dynasty transfers control of his clandestine empire to his son.'
+        rating:
+          type: number
+          format: float
+          example: 9.2
+        isShowing:
+          type: boolean
+          example: true
+        releaseDate:
+          type: string
+          format: date
+          example: '1972-03-24'
+    MovieDetail:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+          example: 1
+        title:
+          type: string
+          example: 'The Godfather'
+        image:
+          type: string
+          example: 'https://example.com/images/the_godfather.jpg'
+        genre:
+          type: string
+          example: 'Crime, Drama'
+        synopsis:
+          type: string
+          example: 'The aging patriarch of an organized crime dynasty transfers control of his clandestine empire to his son.'
+        rating:
+          type: number
+          format: float
+          example: 9.2
+        isShowing:
+          type: boolean
+          example: true
+        releaseDate:
+          type: string
+          format: date
+          example: '1972-03-24'
+        reviews:
+          type: array
+          items:
+            $ref: '#/components/schemas/ReviewMovie'
+    MovieRequest:
+      type: object
+      properties:
+          title:
+            type: string
+            example: 'Avengers: Secret Invasion'
+          image:
+            type: string
+            example: 'https://example.com/images/avengers_secret_invasion.jpg'
+          genre:
+            type: string
+            example: 'Action'
+          synopsis:
+            type: string
+            example: 'The Avengers must team up with their allies to stop the Skrulls from infiltrating and taking over the Earth.'
+          isShowing:
+            type: boolean
+            example: false
+          releaseDate:
+            type: string
+            format: date
+            example: '2023-04-28'
+    ReviewMovieRequest:
+      type: object
+      properties:
+          userId:
+            type: integer
+            format: int64
+            example: 532
+          rating:
+            type: integer
+            example: 7
+          comment:
+            type: string
+            example: 'Complex, volatile, ironic and disquieting, Scorsese Goodfellas is a masterly achievement in intense observation.'
+    ReviewMovie:
+      type: object
+      properties:
+          reviewId:
+            type: integer
+            format: int64
+            example: 52     
+          userId:
+            type: integer
+            format: int64
+            example: 532
+          rating:
+            type: integer
+            example: 7
+          comment:
+            type: string
+            example: 'Complex, volatile, ironic and disquieting, Scorsese Goodfellas is a masterly achievement in intense observation.'
     Tag:
       type: object
       properties:
