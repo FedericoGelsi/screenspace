@@ -7,7 +7,7 @@ info:
     email: testuade1@gmail.com
   version: 0.0.0
 servers:
-  - url: https://petstore3.swagger.io/api/v3
+  - url: https://ScreenSpace.swagger.io/api/v1
 tags:
   - name: user
     description: Application user management
@@ -401,6 +401,37 @@ paths:
       summary: Get all movies
       description: Retrieves a list of all movies.
       operationId: getMovies
+      parameters:
+        - name: theatre
+          in: query
+          description: Filter movies by theatre
+          required: false
+          schema:
+            type: string
+        - name: distance
+          in: query
+          description: Filter movies by distance from user location
+          required: false
+          schema:
+            type: number
+        - name: title
+          in: query
+          description: Filter movies by title
+          required: false
+          schema:
+            type: string
+        - name: genre
+          in: query
+          description: Filter movies by genre
+          required: false
+          schema:
+            type: string
+        - name: rating
+          in: query
+          description: Filter movies by rating
+          required: false
+          schema:
+            type: number
       responses:
         '200':
           description: Successful operation
