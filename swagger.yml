@@ -7,7 +7,7 @@ info:
     email: testuade1@gmail.com
   version: 0.0.0
 servers:
-  - url: https://petstore3.swagger.io/api/v3
+  - url: https://screenspace.swagger.io/api/v1
 tags:
   - name: user
     description: Application user management
@@ -15,6 +15,10 @@ tags:
     description: User access management
   - name: theatre
     description: Movie theatre management
+  - name: movie
+    description: Movies information
+  - name: client
+    description: Client interaction management
   - name: userss
     description: Application user management
   - name: store
@@ -23,7 +27,7 @@ tags:
       description: Find out more about our store
       url: http://swagger.io
 paths:
-  /api/v1/users:
+  /users:
     post:
       tags:
         - user
@@ -51,7 +55,60 @@ paths:
                 $ref: '#/components/schemas/NewUserCreated'
         '500':
           description: Server error while processing the request
-  /api/v1/auths/owners:
+  /users/{userEmail}:
+    get:
+      tags:
+        - user
+      summary: Password Reset Token
+      description: Request a password reset token.
+      operationId: createResetToken
+      parameters:
+        - name: userEmail
+          in: path
+          description: Email of the user requesting a password reset
+          required: true
+          schema:
+            type: string
+            format: email
+            example: user@example.com
+      responses:
+        '201':
+          description: Reset token succesfully sent to email
+        '404':
+          description: User not found
+        '500':
+          description: Server error while processing the request
+    put:
+      tags:
+        - user
+      summary: Password Reset for a user
+      description: Request a password reset.
+      operationId: resetPassword
+      parameters:
+        - name: userEmail
+          in: path
+          description: Email of the user resetting the password
+          required: true
+          schema:
+            type: string
+            format: email
+            example: user@example.com
+      requestBody:
+        description: Password reset body
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PasswordResetRequest'
+      responses:
+        '200':
+          description: Password Reset completed
+        '403':
+          description: Not allowrdto perform the action
+        '404':
+          description: User not found
+        '500':
+          description: Server error while processing the request
+  /auths/owners:
     post:
       tags:
         - auth
@@ -102,7 +159,7 @@ paths:
           description: Refresh token not found
         '500':
           description: Server error while processing the request
-  /api/v1/auths/owners/{ownerId}:
+  /auths/owners/{ownerId}:
     delete:
       tags:
         - auth
@@ -124,7 +181,7 @@ paths:
           description: Bad request
         '500':
           description: Server error while processing the request
-  /api/v1/theatres/owners/{ownerId}:
+  /theatres/owners/{ownerId}:
     post:
       tags:
         - theatre
@@ -156,7 +213,7 @@ paths:
           description: Bad request
         '500':
           description: Server error while processing the request
-  /api/v1/theatres/{theatreId}/halls:
+  /theatres/{theatreId}/halls:
     post:
       tags:
         - theatre
@@ -188,7 +245,7 @@ paths:
           description: Bad request
         '500':
           description: Server error while processing the request
-  /api/v1/theatres/{theatreId}/halls/{hallId}/shows:
+  /theatres/{theatreId}/halls/{hallId}/shows:
     post:
       tags:
         - theatre
@@ -223,6 +280,98 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/MovieTheatreHallShowCreateResponse'
+        '400':
+          description: Bad request
+        '500':
+          description: Server error while processing the request
+  /shows/{showId}:
+    get:
+      tags:
+        - theatre
+      summary: Retrieve status details for a specified show
+      description: Retrieve status details for a specified show
+      operationId: getShowDetails
+      parameters:
+        - name: showId
+          in: path
+          description: ID of theatre that contains the hall
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        '200':
+          description: Show status details retrieved
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ShowStatusDetails'
+        '400':
+          description: Bad request
+        '500':
+          description: Server error while processing the request
+  /movies/{latitude}/{longitude}:
+    get:
+      tags:
+        - movie
+      summary: Obtain all available movies by location
+      description: Retrieves all movies available in nearby locations
+      operationId: getAllMoviesByLocationAndFilters
+      parameters:
+        - name: latitude
+          in: path
+          description: Latitude of the user
+          required: true
+          schema:
+            type: integer
+            format: int64
+        - name: longitude
+          in: path
+          description: Longitude of the user
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        '200':
+          description: All available movies in nearby locations
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MovieDetails'
+        '400':
+          description: Bad request
+        '500':
+          description: Server error while processing the request
+  /clients/{clientEmail}:
+    post:
+      tags:
+        - client
+      summary: Make a reservation for a movie show
+      description: Creates a new reservation for a client for a specified movie
+      operationId: clientReservationCreate
+      parameters:
+        - name: clientEmail
+          in: path
+          description: Email of the user requesting the reservation
+          required: true
+          schema:
+            type: string
+            format: email
+            example: user@example.com
+      requestBody:
+        description: ReservationDetails
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ReservationDetailsRequest'
+      responses:
+        '201':
+          description: Movie theatre hall successfully created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ReservationDetailsResponse'
         '400':
           description: Bad request
         '500':
@@ -887,8 +1036,18 @@ components:
           example: 10
         email:
           type: string
+          format: email
           example: john@email.com
         password:
+          type: string
+          example: '12345'
+    PasswordResetRequest:
+      type: object
+      properties:
+        newPassword:
+          type: string
+          example: '12345'
+        resetToken:
           type: string
           example: '12345'
     OwnerLoginRequest:
@@ -1025,6 +1184,120 @@ components:
           format: date-time
           example: "2023-12-20T10:00:00Z"
     MovieTheatreHallShowCreateResponse:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+          example: 1
+        showId:
+          type: integer
+          format: int64
+          example: 666
+        name:
+          type: string
+          example: 'Show name'
+        timetable:
+          type: integer
+          format: date-time
+          example: "2023-12-20T10:00:00Z"
+    ShowStatusDetails:
+      type: object
+      properties:
+        availableSeats:
+          type: array
+          items:
+            type: object
+            properties:
+              file:
+                type: string
+                example: A
+              column:
+                type: integer
+                format: int64
+                example: 1
+    MovieDetails:
+      type: array
+      items:
+        type: object
+        properties:
+          name:
+            type: string
+            description: Theatre name
+            example: "Cinemax"
+          distance:
+            type: integer
+            description: Theathre distance from user (in km)
+            example: 64
+          halls:
+            type: array
+            items:
+              type: object
+              properties:
+                hallId:
+                  type: integer
+                  description: HallId
+                  example: 1
+                show:
+                  type: array
+                  items:
+                    type: object
+                    properties:
+                      showId:
+                        type: integer
+                        description: showId
+                        example: 2
+                      timetable:
+                        type: integer
+                        format: date-time
+                        example: "2023-12-20T10:00:00Z"
+                      movie:
+                        type: object
+                        properties:
+                          name: 
+                            type: string
+                            description: Movie Name
+                            example: "Avatar 2"
+                          calification:
+                            type: integer
+                            format: int64
+                            description: Movie calification
+                            example: 4.5
+                          genres:
+                            type: array
+                            items:
+                              type: string
+                              example: "Ciencia Ficcion"
+                            
+    ReservationDetailsRequest:
+      type: object
+      properties:
+        theatreId:
+          type: integer
+          format: int64
+          example: 1
+        hallId:
+          type: integer
+          format: int64
+          example: 2
+        showId:
+          type: integer
+          format: int64
+          example: 3
+        seats:
+          type: array
+          items:
+            type: object
+            properties:
+              file:
+                type: string
+                description: File of the seat
+                example: "A"
+              column:
+                type: integer
+                format: int64
+                example: 3
+    ReservationDetailsResponse:
       type: object
       properties:
         id:
