@@ -327,6 +327,33 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Theatre'
+    delete:
+      tags:
+        - theatre
+      summary: Delete one theatre by its ID
+      description: Delete one theatre information by its ID
+      operationId: theatreDeleteById
+      parameters:
+        - name: theatreId
+          in: path
+          description: ID of the theatre
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        '200': 
+          description: Information of the deleted theatre
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Theatre'
+        '400':
+          description: Bad request
+        '401':
+          description: Not authorized
+        '500':
+          description: Server error
   /theatres/owners/{ownerId}:
     post:
       tags:
