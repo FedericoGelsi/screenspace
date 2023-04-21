@@ -22,9 +22,9 @@ paths:
     post:
       tags:
         - user
-      summary: Create a new owner user
-      description: Creates a new movie theatre owner with the email and password provided.
-      operationId: createOwner
+      summary: Create a new user
+      description: Creates a new user with the email and password provided.
+      operationId: createUser
       requestBody:
         description: Created user object
         content:
@@ -142,47 +142,51 @@ paths:
           description: User not found.
         '500':
           description: Server error while processing the request
-  /auths/owners:
+  
+  /auths/login:
     post:
       tags:
         - auth
       summary: User login
-      description: Owner login with the credentials provided.
-      operationId: ownerLogin
+      description: User login with the credentials provided.
+      operationId: userLogin
       requestBody:
         description: User authentication using provided credentials
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/OwnerLoginRequest'
+              $ref: '#/components/schemas/UserLoginRequest'
       responses:
         '200':
           description: User succesfully retrieved
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/OwnerLoginResponse'
+                $ref: '#/components/schemas/UserLoginResponse'
         '400':
           description: Bad request
         '404':
           description: User not found
         '500':
           description: Server error while processing the request
-    put:
+
+
+  /auths/refresh-token:
+    post:
       tags:
         - auth
-      summary: Token refresh for provided user
-      description: Refresh the token provided
-      operationId: ownerRefreshToken
+      summary: Refresh user token
+      description: Refresh user token using an expired token.
+      operationId: refreshUserToken
       requestBody:
-        description: User authentication using provided credentials
+        description: JSON object containing expired token.
         content:
           application/json:
             schema:
               $ref: '#/components/schemas/RefreshTokenRequest'
       responses:
         '200':
-          description: Token refreshed
+          description: Successfully refreshed token
           content:
             application/json:
               schema:
@@ -193,102 +197,26 @@ paths:
           description: Refresh token not found
         '500':
           description: Server error while processing the request
-  /auths/owners/{ownerId}:
+  /auths/logout/{userId}:
     delete:
       tags:
         - auth
       summary: User logout
-      description: Owner logout
-      operationId: ownerLogout
-      parameters:
-        - name: ownerId
-          in: path
-          description: ID of owner thats needs to be logged out
-          required: true
-          schema:
-            type: integer
-            format: int64
-      responses:
-        '200':
-          description: User successfully logged out
-        '400':
-          description: Bad request
-        '500':
-          description: Server error while processing the request
-  /auths/login-google:
-    post:
-      tags:
-        - auth
-      summary: Login with Google
-      description: Logs in a user with their Google account
-      operationId: loginWithGoogle
-      requestBody:
-        description: The user's Google ID token.
-        required: true
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/LoginGoogleRequest'
-      responses:
-        '200':
-          description: Successful operation
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/LoginGoogleResponse'
-        '400':
-          description: Bad request
-        '401':
-          description: Authentication failed.
-        '500':
-          description: Server error while processing the request
-  /auths/register-google:
-    post:
-      tags:
-        - auth
-      summary: Register with Google
-      description: Register a user with their Google account
-      operationId: registerWithGoogle
-      requestBody:
-        description: The user's Google ID token.
-        required: true
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/RegisterGoogleRequest'
-      responses:
-        '201':
-          description: Successful operation
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/RegisterGoogleResponse'
-        '400':
-          description: Bad request
-        '500':
-          description: Server error while processing the request
-  /auths/logout-google/{userId}:
-    delete:
-      tags:
-        - auth
-      summary: Logout with Google
-      description:  Logout a user with their Google account
+      description: User logout
       operationId: userLogout
       parameters:
         - name: userId
           in: path
-          description: ID of the user who needs to be logged out with his google account
+          description: ID of user thats needs to be logged out
           required: true
           schema:
             type: integer
             format: int64
       responses:
-        '204':
+        '200':
           description: User successfully logged out
         '400':
           description: Bad request
-        '404':
-          description: User not found
         '500':
           description: Server error while processing the request
   /theatres:
@@ -697,41 +625,6 @@ paths:
           description: Booking not found
         '500':
           description: Server error while processing the request
-    put:
-      tags:
-        - bookings
-      summary: Update booking details
-      description: Updates details of a booking by its code.
-      operationId: updateBooking
-      parameters:
-        - in: path
-          name: bookingCode
-          description: Booking code
-          required: true
-          schema:
-            type: string
-      requestBody:
-        description: Updated details of the booking
-        required: true
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/BookingRequest'
-      responses:
-        '200':
-          description: Booking updated successfully
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Booking'
-        '400':
-          description: Invalid input parameters
-        '404':
-          description: Booking not found
-        '409':
-          description: Seats are not available
-        '500':
-          description: Server error while processing the request
     delete:
       tags:
         - bookings
@@ -808,27 +701,37 @@ components:
         password:
           type: string
           example: '12345'
-    OwnerLoginRequest:
+    UserLoginRequest:
       type: object
       properties:
         email:
           type: string
           example: john@email.com
+          nullable: true
+          default: null
         password:
           type: string
           example: '12345'
-    OwnerLoginResponse:
+        tokenGoogle:
+          type: string
+          description: The user's Google ID token.
+    UserLoginResponse:
       type: object
       properties:
-        email:
+        accessToken:
           type: string
-          example: john@email.com
-        password:
+          example : eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQSflxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQsswc
+          description: Access token.
+        refreshToken:
           type: string
-          example: '12345'
+          example : eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyLCJleHAiOjE1MTYyMzkwMjJ9.6rN5MWI10r6CV7vK8gAlYk-5NnST1MgOfv6n8K6lR9g
+          description: Refresh token.
     RefreshTokenRequest:
       type: object
       properties:
+        accessToken:
+          type: string
+          example: 'Access token'
         refreshToken:
           type: string
           example: 'Refresh token'
@@ -837,10 +740,7 @@ components:
       properties:
         refreshToken:
           type: string
-          example: 'sdasdasdasd'
-        token:
-          type: string
-          example: 'New Token'
+          example: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyLCJleHAiOjE1MTYyMzkwMjJ9.6rN5MWI10r6CV7vK8gAlYk-5NnST1MgOfv6n8K6lR'
     MovieTheatreCreateRequest:
       type: object
       properties:
@@ -959,36 +859,6 @@ components:
           type: integer
           format: date-time
           example: "2023-12-20T10:00:00Z"
-    LoginGoogleRequest:
-      type: object
-      properties:
-        tokenGoogle:
-          type: string
-          description: The user's Google ID token.
-    LoginGoogleResponse:
-      type: object
-      properties:
-        tokenJWT:
-          type: string
-          example : eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQSflxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQsswc
-          description: Access token.
-    RegisterGoogleRequest:
-      type: object
-      properties:
-        tokenGoogle:
-          type: string
-          description: The user's Google ID token.
-          example: F3498F437FEH7F3JA
-    RegisterGoogleResponse:
-      type: object
-      properties:
-        id:
-          type: integer
-          format: int64
-          example: 124
-        email:
-          type: string
-          example: LeoMessi@gmail.com
     UserProfileRequest:
       type: object
       properties:
@@ -1150,26 +1020,22 @@ components:
     BookingRequest:
       type: object
       properties:  
-          hallId:
+          showId:
             type: integer
             format: int64
             example: 52    
-          date:
+          timetable:
             type: string
-            format: date
-            example: '2023-05-24'
-          time:
-            type: string
-            format: time
-            example: "18:30:00" 
-          numberOfSeats:
-            type: integer
-            example: 3
+            format: date-time
+            example: '2023-05-21T11:30:00.000Z'
           seats:
             type: array
             items:
               type: string
-              example: "A1"      
+            example: 
+            - "A1"
+            - "B2"
+            - "C3"     
     Booking:
       type: object
       properties:
@@ -1182,26 +1048,22 @@ components:
             type: integer
             format: int64
             example: 52    
-          date:
+          timetable:
             type: string
-            format: date
-            example: '2023-05-24'
-          time:
-            type: string
-            format: time
-            example: "18:30:00" 
+            format: date-time
+            example: '2023-05-24T18:30:00.000Z'
           totalPrice:
             type: number
             format: float
             example: 1543.5
-          numberOfSeats:
-            type: integer
-            example: 3
           seats:
             type: array
             items:
               type: string
-              example: "A1"    
+            example: 
+            - "B1"
+            - "B2"
+            - "B3"     
     Tag:
       type: object
       properties:
