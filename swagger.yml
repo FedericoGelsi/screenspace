@@ -18,7 +18,7 @@ tags:
   - name: movie
     description: Movies
 paths:
-  /api/v1/users:
+  /users:
     post:
       tags:
         - user
@@ -65,7 +65,7 @@ paths:
           description: Users not found      
         '500':
           description: Server error while processing the request 
-  /api/v1/users/{userId}:
+  /users/{userId}:
     get:
       tags:
         - user
@@ -112,7 +112,7 @@ paths:
           description: User not found.
         '500':
           description: Server error while processing the request   
-  /api/v1/users/{userId}/profile:
+  /users/{userId}/profile:
     put:
       tags:
         - user
@@ -142,7 +142,7 @@ paths:
           description: User not found.
         '500':
           description: Server error while processing the request
-  /api/v1/auths/owners:
+  /auths/owners:
     post:
       tags:
         - auth
@@ -193,7 +193,7 @@ paths:
           description: Refresh token not found
         '500':
           description: Server error while processing the request
-  /api/v1/auths/owners/{ownerId}:
+  /auths/owners/{ownerId}:
     delete:
       tags:
         - auth
@@ -215,7 +215,7 @@ paths:
           description: Bad request
         '500':
           description: Server error while processing the request
-  /api/v1/auths/login-google:
+  /auths/login-google:
     post:
       tags:
         - auth
@@ -242,7 +242,7 @@ paths:
           description: Authentication failed.
         '500':
           description: Server error while processing the request
-  /api/v1/auths/register-google:
+  /auths/register-google:
     post:
       tags:
         - auth
@@ -267,7 +267,7 @@ paths:
           description: Bad request
         '500':
           description: Server error while processing the request
-  /api/v1/auths/logout-google/{userId}:
+  /auths/logout-google/{userId}:
     delete:
       tags:
         - auth
@@ -291,7 +291,70 @@ paths:
           description: User not found
         '500':
           description: Server error while processing the request
-  /api/v1/theatres/owners/{ownerId}:
+  /theatres:
+    get:
+      tags:
+        - theatre
+      summary: Retrieve all theatres
+      description: Gets all theatres available
+      operationId: theatreGet
+      responses:
+        '200': 
+          description: Theatres successfully retrieved
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Theatres'
+  /theatres/{theatreId}:
+    get:
+      tags:
+        - theatre
+      summary: Retrieve one theatre by its ID
+      description: Gets one theatre information by its ID
+      operationId: theatreGetById
+      parameters:
+        - name: theatreId
+          in: path
+          description: ID of the theatre
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        '200': 
+          description: Theatre successfully retrieved
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Theatre'
+    delete:
+      tags:
+        - theatre
+      summary: Delete one theatre by its ID
+      description: Delete one theatre information by its ID
+      operationId: theatreDeleteById
+      parameters:
+        - name: theatreId
+          in: path
+          description: ID of the theatre
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        '200': 
+          description: Information of the deleted theatre
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Theatre'
+        '400':
+          description: Bad request
+        '401':
+          description: Not authorized
+        '500':
+          description: Server error
+  /theatres/owners/{ownerId}:
     post:
       tags:
         - theatre
@@ -323,7 +386,7 @@ paths:
           description: Bad request
         '500':
           description: Server error while processing the request
-  /api/v1/theatres/{theatreId}/halls:
+  /theatres/{theatreId}/halls:
     post:
       tags:
         - theatre
@@ -355,7 +418,7 @@ paths:
           description: Bad request
         '500':
           description: Server error while processing the request
-  /api/v1/theatres/{theatreId}/halls/{hallId}/shows:
+  /theatres/{theatreId}/halls/{hallId}/shows:
     post:
       tags:
         - theatre
@@ -394,7 +457,7 @@ paths:
           description: Bad request
         '500':
           description: Server error while processing the request
-  /api/v1/movies:
+  /movies:
     get:
       tags:
         - movie
@@ -468,7 +531,7 @@ paths:
           description: Bad request
         '500':
           description: Server error while processing the request 
-  /api/v1/movies/{movieId}/review:
+  /movies/{movieId}/review:
     post:
       tags:
         - movie
@@ -502,7 +565,7 @@ paths:
           description: Bad request
         '500':
           description: Server error while processing the request 
-  /api/v1/movies/{movieId}:
+  /movies/{movieId}:
     get:
       tags:
         - movie
@@ -580,7 +643,7 @@ paths:
           description: Movie not found.
         '500':
           description: Server error while processing the request
-  /api/v1/booking:
+  /booking:
     post:
           tags:
             - bookings
@@ -815,23 +878,23 @@ components:
           example: 'Cinemark Belgrano'
         calle:
           type: string
-          example: 'New Token'
+          example: 'Mendoza'
         numero:
           type: integer
           format: int64
           example: 10
         barrio:
           type: string
-          example: 'New Token'
+          example: 'Caballito'
         localidad:
           type: string
-          example: 'New Token'
+          example: 'CABA'
         provincia:
           type: string
-          example: 'New Token'
+          example: 'Buenos Aires'
         pais:
           type: string
-          example: 'New Token'
+          example: 'Argentina'
     MovieTheatreHallCreateRequest:
       type: object
       properties:
@@ -935,6 +998,39 @@ components:
         avatar:
           type: string
           example: www.imageExample.com/ndasud72363
+    Theatre:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+          example: 1
+        name:
+          type: string
+          example: 'Cinemark Belgrano'
+        calle:
+          type: string
+          example: 'Mendoza'
+        numero:
+          type: integer
+          format: int64
+          example: 10
+        barrio:
+          type: string
+          example: 'Caballito'
+        localidad:
+          type: string
+          example: 'CABA'
+        provincia:
+          type: string
+          example: 'Buenos Aires'
+        pais:
+          type: string
+          example: 'Argentina'
+    Theatres:
+      type: array
+      items:
+        $ref: '#/components/schemas/Theatre'
     Movie:
       type: object
       properties:
