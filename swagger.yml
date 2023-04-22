@@ -13,8 +13,8 @@ tags:
     description: Application user management
   - name: auth
     description: User access management
-  - name: theatre
-    description: Movie theatre management
+  - name: cinema
+    description: Movie cinema management
   - name: movie
     description: Movies
 paths:
@@ -30,21 +30,21 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/NewUser'
+              $ref: "#/components/schemas/NewUser"
       responses:
-        '201':
+        "201":
           description: Successful operation
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/NewUserCreated'
-        '409':
+                $ref: "#/components/schemas/NewUserCreated"
+        "409":
           description: User already exists
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/NewUserCreated'
-        '500':
+                $ref: "#/components/schemas/NewUserCreated"
+        "500":
           description: Server error while processing the request
     get:
       tags:
@@ -53,18 +53,18 @@ paths:
       description: Retrieves a list of all users.
       operationId: getUsers
       responses:
-        '200':
+        "200":
           description: Successful operation
           content:
             application/json:
               schema:
                 type: array
                 items:
-                  $ref: '#/components/schemas/User'
-        '404':
-          description: Users not found      
-        '500':
-          description: Server error while processing the request 
+                  $ref: "#/components/schemas/User"
+        "404":
+          description: Users not found
+        "500":
+          description: Server error while processing the request
   /users/{userId}:
     get:
       tags:
@@ -81,15 +81,15 @@ paths:
             type: integer
             format: int64
       responses:
-        '200':
+        "200":
           description: Successful operation
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/User'
-        '404':
+                $ref: "#/components/schemas/User"
+        "404":
           description: User not found.
-        '500':
+        "500":
           description: Server error while processing the request
     delete:
       tags:
@@ -106,12 +106,12 @@ paths:
             type: integer
             format: int64
       responses:
-        '204':
+        "204":
           description: The user has been successfully deleted
-        '404':
+        "404":
           description: User not found.
-        '500':
-          description: Server error while processing the request   
+        "500":
+          description: Server error while processing the request
   /users/{userId}/profile:
     put:
       tags:
@@ -132,17 +132,17 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/UserProfileRequest'
+              $ref: "#/components/schemas/UserProfileRequest"
       responses:
-        '204':
+        "204":
           description: The user's profile has been successfully updated
-        '400':
+        "400":
           description: Bad request
-        '404':
+        "404":
           description: User not found.
-        '500':
+        "500":
           description: Server error while processing the request
-  
+
   /auths/login:
     post:
       tags:
@@ -155,21 +155,20 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/UserLoginRequest'
+              $ref: "#/components/schemas/UserLoginRequest"
       responses:
-        '200':
+        "200":
           description: User succesfully retrieved
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/UserLoginResponse'
-        '400':
+                $ref: "#/components/schemas/UserLoginResponse"
+        "400":
           description: Bad request
-        '404':
+        "404":
           description: User not found
-        '500':
+        "500":
           description: Server error while processing the request
-
 
   /auths/refresh-token:
     post:
@@ -183,19 +182,19 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/RefreshTokenRequest'
+              $ref: "#/components/schemas/RefreshTokenRequest"
       responses:
-        '200':
+        "200":
           description: Successfully refreshed token
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/RefreshTokenResponse'
-        '400':
+                $ref: "#/components/schemas/RefreshTokenResponse"
+        "400":
           description: Bad request
-        '404':
+        "404":
           description: Refresh token not found
-        '500':
+        "500":
           description: Server error while processing the request
   /auths/logout/{userId}:
     delete:
@@ -213,118 +212,242 @@ paths:
             type: integer
             format: int64
       responses:
-        '200':
+        "200":
           description: User successfully logged out
-        '400':
+        "400":
           description: Bad request
-        '500':
+        "500":
           description: Server error while processing the request
-  /theatres:
-    get:
-      tags:
-        - theatre
-      summary: Retrieve all theatres
-      description: Gets all theatres available
-      operationId: theatreGet
-      responses:
-        '200': 
-          description: Theatres successfully retrieved
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Theatres'
-  /theatres/{theatreId}:
-    get:
-      tags:
-        - theatre
-      summary: Retrieve one theatre by its ID
-      description: Gets one theatre information by its ID
-      operationId: theatreGetById
-      parameters:
-        - name: theatreId
-          in: path
-          description: ID of the theatre
-          required: true
-          schema:
-            type: integer
-            format: int64
-      responses:
-        '200': 
-          description: Theatre successfully retrieved
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Theatre'
-    delete:
-      tags:
-        - theatre
-      summary: Delete one theatre by its ID
-      description: Delete one theatre information by its ID
-      operationId: theatreDeleteById
-      parameters:
-        - name: theatreId
-          in: path
-          description: ID of the theatre
-          required: true
-          schema:
-            type: integer
-            format: int64
-      responses:
-        '200': 
-          description: Information of the deleted theatre
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Theatre'
-        '400':
-          description: Bad request
-        '401':
-          description: Not authorized
-        '500':
-          description: Server error
-  /theatres/owners/{ownerId}:
+  /auths/reset-password:
     post:
       tags:
-        - theatre
-      summary: Create a new movie theatre
-      description: Creates a new movie theatre for the specified owner
-      operationId: theatreCreate
+        - auth
+      summary: Request a password reset
+      description: Sends an email to the user with a verification code to reset their password.
+      operationId: requestPasswordReset
+      requestBody:
+        description: User email address for password reset request
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                email:
+                  type: string
+                  description: User email address
+                  example: example@example.com
+      responses:
+        "200":
+          description: Verification code sent to user's email
+        "400":
+          description: Bad request
+        "404":
+          description: User not found
+        "500":
+          description: Server error while processing the request
+  /auths/verify-reset-code:
+    post:
+      tags:
+        - auth
+      summary: Verify password reset code
+      description: Verifies if the verification code sent to the user for password reset is correct.
+      operationId: verifyPasswordResetCode
+      requestBody:
+        description: Verification code
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                verificationCode:
+                  type: string
+                  description: Verification code sent to user's email
+                  example: 123456
+      responses:
+        "200":
+          description: Verification code is correct
+        "400":
+          description: Bad request
+        "409":
+          description: Incorrect verification code
+        "500":
+          description: Server error while processing the request
+  /auths/new-password:
+    post:
+      tags:
+        - auth
+      summary: Set a new password
+      description: Set new password for user after verifying email and verification code.
+      operationId: setNewPassword
+      requestBody:
+        description: New password
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                email:
+                  type: string
+                  description: User's email
+                  example: Messi@example.com
+                newPassword:
+                  type: string
+                  description: User's new password
+                  example: examplenewpassword123
+      responses:
+        "200":
+          description: Password reset successfully
+        "400":
+          description: Bad request
+        "404":
+          description: User not found 
+        "500":
+          description: Server error while processing the request
+  /cinemas:
+    get:
+      tags:
+        - cinema
+      summary: Retrieve all cinemas
+      description: Gets all cinemas available
+      operationId: cinemaGet
       parameters:
-        - name: ownerId
+        - name: movieId
+          in: query
+          description: Filter cinema by movie id
+          required: false
+          schema:
+            type: integer
+        - name: userId
+          in: query
+          description: Filter cinema by owner
+          required: false
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: cinemas successfully retrieved
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/cinemas"
+    put:
+      tags:
+        - cinema
+      summary: Update cinema information
+      description: The 'id' attribute is required to identify the cinema to update, while all other attributes are optional.
+      operationId: cinemaUpdate
+      requestBody:
+        description: Cinema information to be updated
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/cinemas"
+      responses:
+        "200":
+          description: Cinema information updated successfully
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/cinemas"
+        "400":
+          description: Bad request
+        "404":
+          description: Cinema not found
+        "500":
+          description: Server error while processing the request  
+  /cinemas/{cinemaId}:
+    get:
+      tags:
+        - cinema
+      summary: Retrieve one cinema by its ID
+      description: Gets one cinema information by its ID
+      operationId: cinemaGetById
+      parameters:
+        - name: cinemaId
           in: path
-          description: ID of owner thats owns the movie theatre
+          description: ID of the cinema
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        "200":
+          description: cinema successfully retrieved
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/cinema"
+    delete:
+      tags:
+        - cinema
+      summary: Delete one cinema by its ID
+      description: Delete one cinema information by its ID
+      operationId: cinemaDeleteById
+      parameters:
+        - name: cinemaId
+          in: path
+          description: ID of the cinema
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        "200":
+          description: Information of the deleted cinema
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/cinema"
+        "400":
+          description: Bad request
+        "401":
+          description: Not authorized
+        "500":
+          description: Server error
+  /cinemas/users/{userId}:
+    post:
+      tags:
+        - cinema
+      summary: Create a new movie cinema
+      description: Creates a new movie cinema for the specified user
+      operationId: cinemaCreate
+      parameters:
+        - name: userId
+          in: path
+          description: ID of user thats owns the movie cinema
           required: true
           schema:
             type: integer
             format: int64
       requestBody:
-        description: Movie theatre basic information
+        description: Movie cinema basic information
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/MovieTheatreCreateRequest'
+              $ref: "#/components/schemas/MoviecinemaCreateRequest"
       responses:
-        '201':
-          description: Movie theatre successfully created
+        "201":
+          description: Movie cinema successfully created
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/MovieTheatreCreateResponse'
-        '400':
+                $ref: "#/components/schemas/MoviecinemaCreateResponse"
+        "400":
           description: Bad request
-        '500':
+        "500":
           description: Server error while processing the request
-  /theatres/{theatreId}/halls:
+  /cinemas/{cinemaId}/halls:
     post:
       tags:
-        - theatre
-      summary: Create a new movie theatre
-      description: Creates a new hall for a movie theatre
-      operationId: theatreHallCreate
+        - cinema
+      summary: Create a new movie cinema
+      description: Creates a new hall for a movie cinema
+      operationId: cinemaHallCreate
       parameters:
-        - name: theatreId
+        - name: cinemaId
           in: path
-          description: ID of theatre that contains the hall
+          description: ID of cinema that contains the hall
           required: true
           schema:
             type: integer
@@ -334,36 +457,36 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/MovieTheatreHallCreateRequest'
+              $ref: "#/components/schemas/MoviecinemaHallCreateRequest"
       responses:
-        '201':
-          description: Movie theatre hall successfully created
+        "201":
+          description: Movie cinema hall successfully created
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/MovieTheatreHallCreateResponse'
-        '400':
+                $ref: "#/components/schemas/MoviecinemaHallCreateResponse"
+        "400":
           description: Bad request
-        '500':
+        "500":
           description: Server error while processing the request
-  /theatres/{theatreId}/halls/{hallId}/shows:
+  /cinemas/{cinemaId}/halls/{hallId}/shows:
     post:
       tags:
-        - theatre
+        - cinema
       summary: Create a show in a movie hall
       description: Creates a new show for specified hall
-      operationId: theatreHallShowCreate
+      operationId: cinemaHallShowCreate
       parameters:
-        - name: theatreId
+        - name: cinemaId
           in: path
-          description: ID of theatre that contains the hall
+          description: ID of cinema that contains the hall
           required: true
           schema:
             type: integer
             format: int64
         - name: hallId
           in: path
-          description: ID of theatre that contains the hall
+          description: ID of cinema that contains the hall
           required: true
           schema:
             type: integer
@@ -373,17 +496,17 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/MovieTheatreHallShowCreateRequest'
+              $ref: "#/components/schemas/MoviecinemaHallShowCreateRequest"
       responses:
-        '201':
-          description: Movie theatre hall successfully created
+        "201":
+          description: Movie cinema hall successfully created
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/MovieTheatreHallShowCreateResponse'
-        '400':
+                $ref: "#/components/schemas/MoviecinemaHallShowCreateResponse"
+        "400":
           description: Bad request
-        '500':
+        "500":
           description: Server error while processing the request
   /movies:
     get:
@@ -393,9 +516,9 @@ paths:
       description: Retrieves a list of all movies.
       operationId: getMovies
       parameters:
-        - name: theatre
+        - name: cinema
           in: query
-          description: Filter movies by theatre
+          description: Filter movies by cinema
           required: false
           schema:
             type: string
@@ -424,18 +547,18 @@ paths:
           schema:
             type: number
       responses:
-        '200':
+        "200":
           description: Successful operation
           content:
             application/json:
               schema:
                 type: array
                 items:
-                  $ref: '#/components/schemas/Movie'
-        '404':
+                  $ref: "#/components/schemas/Movie"
+        "404":
           description: Movies not found.
-        '500':
-          description: Server error while processing the request 
+        "500":
+          description: Server error while processing the request
     post:
       tags:
         - movie
@@ -447,18 +570,18 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/MovieRequest'
+              $ref: "#/components/schemas/MovieRequest"
       responses:
-        '201':
+        "201":
           description: Successful operation
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Movie'
-        '404':
+                $ref: "#/components/schemas/Movie"
+        "404":
           description: Bad request
-        '500':
-          description: Server error while processing the request 
+        "500":
+          description: Server error while processing the request
   /movies/{movieId}/review:
     post:
       tags:
@@ -479,20 +602,20 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/ReviewMovieRequest'
+              $ref: "#/components/schemas/ReviewMovieRequest"
       responses:
-        '201':
+        "201":
           description: Successful operation
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/ReviewMovie'
-        '400':
-          description: User not found        
-        '404':
+                $ref: "#/components/schemas/ReviewMovie"
+        "400":
+          description: User not found
+        "404":
           description: Bad request
-        '500':
-          description: Server error while processing the request 
+        "500":
+          description: Server error while processing the request
   /movies/{movieId}:
     get:
       tags:
@@ -509,15 +632,15 @@ paths:
             type: integer
             format: int64
       responses:
-        '200':
+        "200":
           description: Successful operation
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/MovieDetail'
-        '404':
+                $ref: "#/components/schemas/MovieDetail"
+        "404":
           description: Movie not found.
-        '500':
+        "500":
           description: Server error while processing the request
     put:
       tags:
@@ -538,17 +661,17 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/MovieRequest'
+              $ref: "#/components/schemas/MovieRequest"
       responses:
-        '200':
+        "200":
           description: The movie has been successfully updated
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Movie'
-        '404':
+                $ref: "#/components/schemas/Movie"
+        "404":
           description: Movie not found.
-        '500':
+        "500":
           description: Server error while processing the request
     delete:
       tags:
@@ -565,41 +688,88 @@ paths:
             type: integer
             format: int64
       responses:
-        '204':
+        "204":
           description: The movie has been successfully deleted
-        '404':
+        "404":
           description: Movie not found.
-        '500':
+        "500":
+          description: Server error while processing the request
+  /movies/genres:
+    get:
+      tags:
+        - movie
+      summary: Get all movie genres
+      description: Retrieves a list of all movie genres.
+      operationId: getMovieGenres
+      responses:
+        "200":
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: string
+              example: ["terror", "comedy", "drama"]
+        "404":
+          description: Genres not found.
+        "500":
           description: Server error while processing the request
   /booking:
+    get:
+      tags:
+        - bookings
+      summary: Get all bookings
+      description: Retrieves a list of all existing bookings.
+      operationId: getBookings
+      parameters:
+        - name: userId
+          in: query
+          description: Filter bookings by user id
+          required: false
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Booking"
+        "404":
+          description: Bookings not found.
+        "500":
+          description: Server error while processing the request
     post:
-          tags:
-            - bookings
-          summary: Create a new booking
-          description: Creates a new booking for a movie theater show.
-          operationId: createBooking
-          requestBody:
-            description: Details of the booking to be created.
-            required: true
-            content:
-              application/json:
-                schema:
-                  $ref: '#/components/schemas/BookingRequest'
-          responses:
-            '201':
-              description: Booking created successfully
-              content:
-                application/json:
-                  schema:
-                    $ref: '#/components/schemas/Booking'
-            '400':
-              description: Invalid input parameters
-            '404':
-              description: Movie show or cinema hall not found
-            '409':
-              description: Seats are not available
-            '500':
-              description: Server error while processing the request
+      tags:
+        - bookings
+      summary: Create a new booking
+      description: Creates a new booking for a movie theater show.
+      operationId: createBooking
+      requestBody:
+        description: Details of the booking to be created.
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/BookingRequest"
+      responses:
+        "201":
+          description: Booking created successfully
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Booking"
+        "400":
+          description: Invalid input parameters
+        "404":
+          description: Movie show or cinema hall not found
+        "409":
+          description: Seats are not available
+        "500":
+          description: Server error while processing the request
   /bookings/{bookingCode}:
     get:
       tags:
@@ -615,15 +785,15 @@ paths:
           schema:
             type: string
       responses:
-        '200':
+        "200":
           description: Successful operation
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Booking'
-        '404':
+                $ref: "#/components/schemas/Booking"
+        "404":
           description: Booking not found
-        '500':
+        "500":
           description: Server error while processing the request
     delete:
       tags:
@@ -639,11 +809,11 @@ paths:
           schema:
             type: string
       responses:
-        '204':
+        "204":
           description: Booking deleted successfully
-        '404':
+        "404":
           description: Booking not found
-        '500':
+        "500":
           description: Server error while processing the request
 components:
   schemas:
@@ -668,10 +838,10 @@ components:
           example: john@email.com
         password:
           type: string
-          example: '12345'
+          example: "12345"
         phone:
           type: string
-          example: '12345'
+          example: "12345"
         userStatus:
           type: integer
           description: User Status
@@ -687,7 +857,7 @@ components:
           example: john@email.com
         password:
           type: string
-          example: '12345'
+          example: "12345"
     NewUserCreated:
       type: object
       properties:
@@ -700,7 +870,7 @@ components:
           example: john@email.com
         password:
           type: string
-          example: '12345'
+          example: "12345"
     UserLoginRequest:
       type: object
       properties:
@@ -711,7 +881,7 @@ components:
           default: null
         password:
           type: string
-          example: '12345'
+          example: "12345"
         tokenGoogle:
           type: string
           description: The user's Google ID token.
@@ -720,53 +890,53 @@ components:
       properties:
         accessToken:
           type: string
-          example : eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQSflxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQsswc
+          example: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQSflxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQsswc
           description: Access token.
         refreshToken:
           type: string
-          example : eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyLCJleHAiOjE1MTYyMzkwMjJ9.6rN5MWI10r6CV7vK8gAlYk-5NnST1MgOfv6n8K6lR9g
+          example: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyLCJleHAiOjE1MTYyMzkwMjJ9.6rN5MWI10r6CV7vK8gAlYk-5NnST1MgOfv6n8K6lR9g
           description: Refresh token.
     RefreshTokenRequest:
       type: object
       properties:
         accessToken:
           type: string
-          example: 'Access token'
+          example: "Access token"
         refreshToken:
           type: string
-          example: 'Refresh token'
+          example: "Refresh token"
     RefreshTokenResponse:
       type: object
       properties:
         refreshToken:
           type: string
-          example: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyLCJleHAiOjE1MTYyMzkwMjJ9.6rN5MWI10r6CV7vK8gAlYk-5NnST1MgOfv6n8K6lR'
-    MovieTheatreCreateRequest:
+          example: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyLCJleHAiOjE1MTYyMzkwMjJ9.6rN5MWI10r6CV7vK8gAlYk-5NnST1MgOfv6n8K6lR"
+    MoviecinemaCreateRequest:
       type: object
       properties:
         name:
           type: string
-          example: 'Cinemark Belgrano'
+          example: "Cinemark Belgrano"
         calle:
           type: string
-          example: 'New Token'
+          example: "New Token"
         numero:
           type: integer
           format: int64
           example: 10
         barrio:
           type: string
-          example: 'New Token'
+          example: "New Token"
         localidad:
           type: string
-          example: 'New Token'
+          example: "New Token"
         provincia:
           type: string
-          example: 'New Token'
+          example: "New Token"
         pais:
           type: string
-          example: 'New Token'
-    MovieTheatreCreateResponse:
+          example: "New Token"
+    MoviecinemaCreateResponse:
       type: object
       properties:
         id:
@@ -775,32 +945,32 @@ components:
           example: 1
         name:
           type: string
-          example: 'Cinemark Belgrano'
+          example: "Cinemark Belgrano"
         calle:
           type: string
-          example: 'Mendoza'
+          example: "Mendoza"
         numero:
           type: integer
           format: int64
           example: 10
         barrio:
           type: string
-          example: 'Caballito'
+          example: "Caballito"
         localidad:
           type: string
-          example: 'CABA'
+          example: "CABA"
         provincia:
           type: string
-          example: 'Buenos Aires'
+          example: "Buenos Aires"
         pais:
           type: string
-          example: 'Argentina'
-    MovieTheatreHallCreateRequest:
+          example: "Argentina"
+    MoviecinemaHallCreateRequest:
       type: object
       properties:
         name:
           type: string
-          example: 'Hall Name'
+          example: "Hall Name"
         width:
           type: integer
           format: int64
@@ -809,7 +979,7 @@ components:
           type: integer
           format: int64
           example: 30
-    MovieTheatreHallCreateResponse:
+    MoviecinemaHallCreateResponse:
       type: object
       properties:
         id:
@@ -818,7 +988,7 @@ components:
           example: 1
         name:
           type: string
-          example: 'Hall Name'
+          example: "Hall Name"
         width:
           type: integer
           format: int64
@@ -827,7 +997,7 @@ components:
           type: integer
           format: int64
           example: 30
-    MovieTheatreHallShowCreateRequest:
+    MoviecinemaHallShowCreateRequest:
       type: object
       properties:
         showId:
@@ -836,12 +1006,12 @@ components:
           example: 666
         name:
           type: string
-          example: 'Show name'
+          example: "Show name"
         timetable:
           type: integer
           format: date-time
           example: "2023-12-20T10:00:00Z"
-    MovieTheatreHallShowCreateResponse:
+    MoviecinemaHallShowCreateResponse:
       type: object
       properties:
         id:
@@ -854,7 +1024,7 @@ components:
           example: 666
         name:
           type: string
-          example: 'Show name'
+          example: "Show name"
         timetable:
           type: integer
           format: date-time
@@ -868,7 +1038,7 @@ components:
         avatar:
           type: string
           example: www.imageExample.com/ndasud72363
-    Theatre:
+    cinema:
       type: object
       properties:
         id:
@@ -877,30 +1047,30 @@ components:
           example: 1
         name:
           type: string
-          example: 'Cinemark Belgrano'
+          example: "Cinemark Belgrano"
         calle:
           type: string
-          example: 'Mendoza'
+          example: "Mendoza"
         numero:
           type: integer
           format: int64
           example: 10
         barrio:
           type: string
-          example: 'Caballito'
+          example: "Caballito"
         localidad:
           type: string
-          example: 'CABA'
+          example: "CABA"
         provincia:
           type: string
-          example: 'Buenos Aires'
+          example: "Buenos Aires"
         pais:
           type: string
-          example: 'Argentina'
-    Theatres:
+          example: "Argentina"
+    cinemas:
       type: array
       items:
-        $ref: '#/components/schemas/Theatre'
+        $ref: "#/components/schemas/cinema"
     Movie:
       type: object
       properties:
@@ -910,16 +1080,16 @@ components:
           example: 1
         title:
           type: string
-          example: 'The Godfather'
+          example: "The Godfather"
         image:
           type: string
-          example: 'https://example.com/images/the_godfather.jpg'
+          example: "https://example.com/images/the_godfather.jpg"
         genre:
           type: string
-          example: 'Crime, Drama'
+          example: "Crime, Drama"
         synopsis:
           type: string
-          example: 'The aging patriarch of an organized crime dynasty transfers control of his clandestine empire to his son.'
+          example: "The aging patriarch of an organized crime dynasty transfers control of his clandestine empire to his son."
         rating:
           type: number
           format: float
@@ -930,7 +1100,7 @@ components:
         releaseDate:
           type: string
           format: date
-          example: '1972-03-24'
+          example: "1972-03-24"
     MovieDetail:
       type: object
       properties:
@@ -940,16 +1110,16 @@ components:
           example: 1
         title:
           type: string
-          example: 'The Godfather'
+          example: "The Godfather"
         image:
           type: string
-          example: 'https://example.com/images/the_godfather.jpg'
+          example: "https://example.com/images/the_godfather.jpg"
         genre:
           type: string
-          example: 'Crime, Drama'
+          example: "Crime, Drama"
         synopsis:
           type: string
-          example: 'The aging patriarch of an organized crime dynasty transfers control of his clandestine empire to his son.'
+          example: "The aging patriarch of an organized crime dynasty transfers control of his clandestine empire to his son."
         rating:
           type: number
           format: float
@@ -960,110 +1130,110 @@ components:
         releaseDate:
           type: string
           format: date
-          example: '1972-03-24'
+          example: "1972-03-24"
         reviews:
           type: array
           items:
-            $ref: '#/components/schemas/ReviewMovie'
+            $ref: "#/components/schemas/ReviewMovie"
     MovieRequest:
       type: object
       properties:
-          title:
-            type: string
-            example: 'Avengers: Secret Invasion'
-          image:
-            type: string
-            example: 'https://example.com/images/avengers_secret_invasion.jpg'
-          genre:
-            type: string
-            example: 'Action'
-          synopsis:
-            type: string
-            example: 'The Avengers must team up with their allies to stop the Skrulls from infiltrating and taking over the Earth.'
-          isShowing:
-            type: boolean
-            example: false
-          releaseDate:
-            type: string
-            format: date
-            example: '2023-04-28'
+        title:
+          type: string
+          example: "Avengers: Secret Invasion"
+        image:
+          type: string
+          example: "https://example.com/images/avengers_secret_invasion.jpg"
+        genre:
+          type: string
+          example: "Action"
+        synopsis:
+          type: string
+          example: "The Avengers must team up with their allies to stop the Skrulls from infiltrating and taking over the Earth."
+        isShowing:
+          type: boolean
+          example: false
+        releaseDate:
+          type: string
+          format: date
+          example: "2023-04-28"
     ReviewMovieRequest:
       type: object
       properties:
-          userId:
-            type: integer
-            format: int64
-            example: 532
-          rating:
-            type: integer
-            example: 7
-          comment:
-            type: string
-            example: 'Complex, volatile, ironic and disquieting, Scorsese Goodfellas is a masterly achievement in intense observation.'
+        userId:
+          type: integer
+          format: int64
+          example: 532
+        rating:
+          type: integer
+          example: 7
+        comment:
+          type: string
+          example: "Complex, volatile, ironic and disquieting, Scorsese Goodfellas is a masterly achievement in intense observation."
     ReviewMovie:
       type: object
       properties:
-          reviewId:
-            type: integer
-            format: int64
-            example: 52     
-          userId:
-            type: integer
-            format: int64
-            example: 532
-          rating:
-            type: integer
-            example: 7
-          comment:
-            type: string
-            example: 'Complex, volatile, ironic and disquieting, Scorsese Goodfellas is a masterly achievement in intense observation.'
+        reviewId:
+          type: integer
+          format: int64
+          example: 52
+        userId:
+          type: integer
+          format: int64
+          example: 532
+        rating:
+          type: integer
+          example: 7
+        comment:
+          type: string
+          example: "Complex, volatile, ironic and disquieting, Scorsese Goodfellas is a masterly achievement in intense observation."
     BookingRequest:
       type: object
-      properties:  
-          showId:
-            type: integer
-            format: int64
-            example: 52    
-          timetable:
+      properties:
+        showId:
+          type: integer
+          format: int64
+          example: 52
+        timetable:
+          type: string
+          format: date-time
+          example: "2023-05-21T11:30:00.000Z"
+        seats:
+          type: array
+          items:
             type: string
-            format: date-time
-            example: '2023-05-21T11:30:00.000Z'
-          seats:
-            type: array
-            items:
-              type: string
-            example: 
+          example:
             - "A1"
             - "B2"
-            - "C3"     
+            - "C3"
     Booking:
       type: object
       properties:
-          bookingCode:
+        bookingCode:
+          type: string
+          example: "BAD56ER"
+        movie:
+          $ref: "#/components/schemas/Movie"
+        hallId:
+          type: integer
+          format: int64
+          example: 52
+        timetable:
+          type: string
+          format: date-time
+          example: "2023-05-24T18:30:00.000Z"
+        totalPrice:
+          type: number
+          format: float
+          example: 1543.5
+        seats:
+          type: array
+          items:
             type: string
-            example: 'BAD56ER'
-          movie:
-            $ref: '#/components/schemas/Movie'
-          hallId:
-            type: integer
-            format: int64
-            example: 52    
-          timetable:
-            type: string
-            format: date-time
-            example: '2023-05-24T18:30:00.000Z'
-          totalPrice:
-            type: number
-            format: float
-            example: 1543.5
-          seats:
-            type: array
-            items:
-              type: string
-            example: 
+          example:
             - "B1"
             - "B2"
-            - "B3"     
+            - "B3"
     Tag:
       type: object
       properties:
@@ -1085,7 +1255,7 @@ components:
         message:
           type: string
       xml:
-        name: '##default'
+        name: "##default"
   requestBodies:
     UserArray:
       description: List of user object
@@ -1094,7 +1264,7 @@ components:
           schema:
             type: array
             items:
-              $ref: '#/components/schemas/User'
+              $ref: "#/components/schemas/User"
   securitySchemes:
     petstore_auth:
       type: oauth2
