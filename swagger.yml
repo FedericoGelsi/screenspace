@@ -46,51 +46,7 @@ paths:
                 $ref: "#/components/schemas/NewUserCreated"
         "500":
           description: Server error while processing the request
-    get:
-      tags:
-        - user
-      summary: Get all users
-      description: Retrieves a list of all users.
-      operationId: getUsers
-      responses:
-        "200":
-          description: Successful operation
-          content:
-            application/json:
-              schema:
-                type: array
-                items:
-                  $ref: "#/components/schemas/User"
-        "404":
-          description: Users not found
-        "500":
-          description: Server error while processing the request
   /users/{userId}:
-    get:
-      tags:
-        - user
-      summary: Get user by ID
-      description: Retrieves a specific user by their ID.
-      operationId: getUserById
-      parameters:
-        - name: userId
-          in: path
-          description: ID of the user to retrieve.
-          required: true
-          schema:
-            type: integer
-            format: int64
-      responses:
-        "200":
-          description: Successful operation
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/User"
-        "404":
-          description: User not found.
-        "500":
-          description: Server error while processing the request
     delete:
       tags:
         - user
@@ -405,7 +361,7 @@ paths:
           description: Not authorized
         "500":
           description: Server error
-  /cinemas/users/{userId}:
+  /cinemas/users:
     post:
       tags:
         - cinema
@@ -441,7 +397,7 @@ paths:
     post:
       tags:
         - cinema
-      summary: Create a new movie cinema
+      summary: Adds new cinema hall
       description: Creates a new hall for a movie cinema
       operationId: cinemaHallCreate
       parameters:
@@ -559,29 +515,6 @@ paths:
           description: Movies not found.
         "500":
           description: Server error while processing the request
-    post:
-      tags:
-        - movie
-      summary: Create a new movie
-      description: Creates a new movie with the details provided.
-      operationId: createMovie
-      requestBody:
-        description: Created movie object
-        content:
-          application/json:
-            schema:
-              $ref: "#/components/schemas/MovieRequest"
-      responses:
-        "201":
-          description: Successful operation
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/Movie"
-        "404":
-          description: Bad request
-        "500":
-          description: Server error while processing the request
   /movies/{movieId}/review:
     post:
       tags:
@@ -642,37 +575,6 @@ paths:
           description: Movie not found.
         "500":
           description: Server error while processing the request
-    put:
-      tags:
-        - movie
-      summary: Update movie by ID
-      description: Updates a specific movie by its ID.
-      operationId: updateMovieById
-      parameters:
-        - name: movieId
-          in: path
-          description: ID of the movie to update.
-          required: true
-          schema:
-            type: integer
-            format: int64
-      requestBody:
-        description: Optional parameters to modify movie information.
-        content:
-          application/json:
-            schema:
-              $ref: "#/components/schemas/MovieRequest"
-      responses:
-        "200":
-          description: The movie has been successfully updated
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/Movie"
-        "404":
-          description: Movie not found.
-        "500":
-          description: Server error while processing the request
     delete:
       tags:
         - movie
@@ -719,7 +621,7 @@ paths:
     get:
       tags:
         - bookings
-      summary: Get all bookings
+      summary: Get all bookings by userId
       description: Retrieves a list of all existing bookings.
       operationId: getBookings
       parameters:
@@ -768,51 +670,6 @@ paths:
           description: Movie show or cinema hall not found
         "409":
           description: Seats are not available
-        "500":
-          description: Server error while processing the request
-  /bookings/{bookingCode}:
-    get:
-      tags:
-        - bookings
-      summary: Get booking details by code
-      description: Retrieves details of a booking by its unique code.
-      operationId: getBookingByCode
-      parameters:
-        - in: path
-          name: bookingCode
-          description: Booking code
-          required: true
-          schema:
-            type: string
-      responses:
-        "200":
-          description: Successful operation
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/Booking"
-        "404":
-          description: Booking not found
-        "500":
-          description: Server error while processing the request
-    delete:
-      tags:
-        - bookings
-      summary: Delete booking
-      description: Deletes a booking by its unique code.
-      operationId: deleteBooking
-      parameters:
-        - in: path
-          name: bookingCode
-          description: Booking code
-          required: true
-          schema:
-            type: string
-      responses:
-        "204":
-          description: Booking deleted successfully
-        "404":
-          description: Booking not found
         "500":
           description: Server error while processing the request
 components:
@@ -914,6 +771,9 @@ components:
     MoviecinemaCreateRequest:
       type: object
       properties:
+        userId:
+          type: integer
+          example: 120
         name:
           type: string
           example: "Cinemark Belgrano"
