@@ -425,6 +425,37 @@ paths:
           description: Bad request
         "500":
           description: Server error while processing the request
+    put:
+      tags:
+        - cinema
+      summary: Create a new movie cinema
+      description: Updates a hall for a movie cinema
+      operationId: cinemaHallUpdate
+      parameters:
+        - name: cinemaId
+          in: path
+          description: ID of cinema that contains the hall
+          required: true
+          schema:
+            type: integer
+            format: int64
+      requestBody:
+        description: Hall details
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/MoviecinemaHallCreateRequest"
+      responses:
+        "201":
+          description: Movie cinema hall successfully created
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/MoviecinemaHallCreateResponse"
+        "400":
+          description: Bad request
+        "500":
+          description: Server error while processing the request
   /cinemas/{cinemaId}/halls/{hallId}/shows:
     post:
       tags:
@@ -478,7 +509,13 @@ paths:
           required: false
           schema:
             type: string
-        - name: distance
+        - name: latitude
+          in: query
+          description: Filter movies by distance from user location
+          required: false
+          schema:
+            type: number
+        - name: longitude
           in: query
           description: Filter movies by distance from user location
           required: false
@@ -704,6 +741,9 @@ components:
           description: User Status
           format: int32
           example: 1
+        avatar:
+          type: string
+          example: "https://example.com/images/the_godfather.jpg"
       xml:
         name: user
     NewUser:
@@ -753,6 +793,8 @@ components:
           type: string
           example: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyLCJleHAiOjE1MTYyMzkwMjJ9.6rN5MWI10r6CV7vK8gAlYk-5NnST1MgOfv6n8K6lR9g
           description: Refresh token.
+        user:
+          $ref: "#/components/schemas/User"
     RefreshTokenRequest:
       type: object
       properties:
@@ -777,6 +819,9 @@ components:
         name:
           type: string
           example: "Cinemark Belgrano"
+        company:
+          type: string
+          example: "Hoyts"
         calle:
           type: string
           example: "New Token"
@@ -796,6 +841,16 @@ components:
         pais:
           type: string
           example: "New Token"
+        latitude:
+          type: string
+          example: 41°24'12.2"N
+        longitude:
+          type: string
+          example: 2°10'26.5"E
+        seatCost:
+          type: integer
+          format: int64
+          example: 200
     MoviecinemaCreateResponse:
       type: object
       properties:
@@ -839,6 +894,9 @@ components:
           type: integer
           format: int64
           example: 30
+        available:
+          type: boolean
+          example: true
     MoviecinemaHallCreateResponse:
       type: object
       properties:
@@ -927,6 +985,40 @@ components:
         pais:
           type: string
           example: "Argentina"
+        halls:
+          type: array
+          items: 
+            $ref: "#/components/schemas/hall"
+    hall:
+      type: object
+      properties:
+        height:
+          type: integer
+          example: 30
+        lenght:
+          type: integer
+          example: 20
+        available:
+          type: boolean
+          example: true
+        shows:
+          type: array
+          items:
+            $ref: "#/components/schemas/show"
+    show:
+      type: object
+      properties:
+        movieId:
+          type: integer
+          example: 10
+        availableSeats:
+          type: array
+          items:
+            type: string
+            example: 
+              - "A1"
+              - "B2"
+              - "C3"
     cinemas:
       type: array
       items:
@@ -941,6 +1033,10 @@ components:
         title:
           type: string
           example: "The Godfather"
+        duration:
+          type: integer
+          format: int64
+          example: 240
         image:
           type: string
           example: "https://example.com/images/the_godfather.jpg"
@@ -971,6 +1067,10 @@ components:
         title:
           type: string
           example: "The Godfather"
+        duration:
+          type: integer
+          format: int64
+          example: 240
         image:
           type: string
           example: "https://example.com/images/the_godfather.jpg"
