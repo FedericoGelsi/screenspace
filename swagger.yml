@@ -5,7 +5,7 @@ info:
     This is the ScreenSpace Server endpoints documentation with which the mobile application will interact with in order to perform its required functions.
   contact:
     email: testuade1@gmail.com
-  version: 0.0.0
+  version: 0.0.1
 servers:
   - url: https://ScreenSpace.swagger.io/api/v1
 tags:
@@ -513,6 +513,13 @@ paths:
       description: Deletes a specific hall by their ID.
       operationId: deleteHallById
       parameters:
+        - name: cinemaId
+          in: path
+          description: ID of cinema that contains the hall
+          required: true
+          schema:
+            type: integer
+            format: int64
         - name: hallId
           in: path
           description: ID of the hall to delete.
@@ -1269,16 +1276,3 @@ components:
             type: array
             items:
               $ref: "#/components/schemas/User"
-  securitySchemes:
-    petstore_auth:
-      type: oauth2
-      flows:
-        implicit:
-          authorizationUrl: https://petstore3.swagger.io/oauth/authorize
-          scopes:
-            write:pets: modify pets in your account
-            read:pets: read your pets
-    api_key:
-      type: apiKey
-      name: api_key
-      in: header
