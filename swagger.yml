@@ -7,6 +7,9 @@ info:
     email: testuade1@gmail.com
   version: 0.0.1
 servers:
+  # Added by API Auto Mocking Plugin
+  - description: SwaggerHub API Auto Mocking
+    url: https://virtserver.swaggerhub.com/ivanchan194/ScreenSpace/0.0.1
   - url: https://ScreenSpace.swagger.io/api/v1
 tags:
   - name: user
@@ -1106,6 +1109,10 @@ components:
         movieId:
           type: integer
           example: 10
+        datetime:
+          type: string
+          format: datetime
+          example: 2017-07-21T17:32:28Z
         availableSeats:
           type: array
           items:
