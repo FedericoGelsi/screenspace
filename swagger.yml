@@ -37,7 +37,11 @@ paths:
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/NewUserCreated"
+                $ref: "#/components/schemas/NewUserCreated"     
+        "401":
+          description: Unauthorized - Invalid or expired token
+        "403":
+          description: Forbidden - User not authorized
         "409":
           description: User already exists
           content:
@@ -66,6 +70,10 @@ paths:
           description: The user has been successfully deleted
         "400":
           description: Bad request
+        "401":
+          description: Unauthorized - Invalid or expired token
+        "403":
+          description: Forbidden - User not authorized
         "404":
           description: User not found
         "500":
@@ -96,6 +104,10 @@ paths:
           description: The user's profile has been successfully updated
         "400":
           description: Bad request
+        "401":
+          description: Unauthorized - Invalid or expired token
+        "403":
+          description: Forbidden - User not authorized
         "404":
           description: User not found
         "500":
@@ -174,6 +186,10 @@ paths:
           description: User successfully logged out
         "400":
           description: Bad request
+        "401":
+          description: Unauthorized - Invalid or expired token
+        "403":
+          description: Forbidden - User not authorized
         "404":
           description: User not found
         "500":
@@ -219,6 +235,9 @@ paths:
             schema:
               type: object
               properties:
+                email:
+                  type: string
+                  example: leoMessi@gmail.com
                 verificationCode:
                   type: string
                   description: Verification code sent to user's email
@@ -290,6 +309,10 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/cinemas"
+        "401":
+          description: Unauthorized - Invalid or expired token
+        "403":
+          description: Forbidden - User not authorized
         "500":
           description: Server error
     put:
@@ -314,6 +337,10 @@ paths:
                 $ref: "#/components/schemas/cinemas"
         "400":
           description: Bad request
+        "401":
+          description: Unauthorized - Invalid or expired token
+        "403":
+          description: Forbidden - User not authorized
         "404":
           description: Cinema not found
         "500":
@@ -340,6 +367,10 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/cinema"
+        "401":
+          description: Unauthorized - Invalid or expired token
+        "403":
+          description: Forbidden - User not authorized
         "404":
           description: Cinema not found
         "500":
@@ -368,7 +399,9 @@ paths:
         "400":
           description: Bad request
         "401":
-          description: Not authorized
+          description: Unauthorized - Invalid or expired token
+        "403":
+          description: Forbidden - User not authorized
         "500":
           description: Server error
   /cinemas/users:
@@ -393,6 +426,10 @@ paths:
                 $ref: "#/components/schemas/MoviecinemaCreateResponse"
         "400":
           description: Bad request
+        "401":
+          description: Unauthorized - Invalid or expired token
+        "403":
+          description: Forbidden - User not authorized
         "500":
           description: Server error while processing the request
   /cinemas/{cinemaId}/halls:
@@ -425,6 +462,10 @@ paths:
                 $ref: "#/components/schemas/MoviecinemaHallCreateResponse"
         "400":
           description: Bad request
+        "401":
+          description: Unauthorized - Invalid or expired token
+        "403":
+          description: Forbidden - User not authorized
         "500":
           description: Server error while processing the request
     put:
@@ -456,8 +497,40 @@ paths:
                 $ref: "#/components/schemas/MoviecinemaHallCreateResponse"
         "400":
           description: Bad request
+        "401":
+          description: Unauthorized - Invalid or expired token
+        "403":
+          description: Forbidden - User not authorized
         "404":
           description: Cinema hall not found
+        "500":
+          description: Server error while processing the request
+  /cinemas/{cinemaId}/halls/{hallId}:
+    delete:
+      tags:
+        - cinema
+      summary: Delete hall by ID
+      description: Deletes a specific hall by their ID.
+      operationId: deleteHallById
+      parameters:
+        - name: hallId
+          in: path
+          description: ID of the hall to delete.
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        "204":
+          description: The hall has been successfully deleted
+        "400":
+          description: Bad request
+        "401":
+          description: Unauthorized - Invalid or expired token
+        "403":
+          description: Forbidden - User not authorized
+        "404":
+          description: User not found
         "500":
           description: Server error while processing the request
   /cinemas/{cinemaId}/halls/{hallId}/shows:
@@ -497,6 +570,11 @@ paths:
                 $ref: "#/components/schemas/MoviecinemaHallShowCreateResponse"
         "400":
           description: Bad request
+        "401":
+          description: Unauthorized - Invalid or expired token
+
+        "403":
+          description: Forbidden - User not authorized
         "500":
           description: Server error while processing the request
   /movies:
@@ -554,6 +632,10 @@ paths:
                   $ref: "#/components/schemas/Movie"
         "404":
           description: Movies not found.
+        "401":
+          description: Unauthorized - Invalid or expired token
+        "403":
+          description: Forbidden - User not authorized
         "500":
           description: Server error while processing the request
   /movies/{movieId}/review:
@@ -586,6 +668,10 @@ paths:
                 $ref: "#/components/schemas/ReviewMovie"
         "400":
           description: User not found
+        "401":
+          description: Unauthorized - Invalid or expired token
+        "403":
+          description: Forbidden - User not authorized
         "404":
           description: Bad request
         "500":
@@ -612,27 +698,10 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/MovieDetail"
-        "404":
-          description: Movie not found.
-        "500":
-          description: Server error while processing the request
-    delete:
-      tags:
-        - movie
-      summary: Delete movie by ID
-      description: Deletes a specific movie by its ID.
-      operationId: deleteMovieById
-      parameters:
-        - name: movieId
-          in: path
-          description: ID of the movie to delete.
-          required: true
-          schema:
-            type: integer
-            format: int64
-      responses:
-        "204":
-          description: The movie has been successfully deleted
+        "401":
+          description: Unauthorized - Invalid or expired token
+        "403":
+          description: Forbidden - User not authorized
         "404":
           description: Movie not found.
         "500":
@@ -654,6 +723,10 @@ paths:
                 items:
                   type: string
               example: ["terror", "comedy", "drama"]
+        "401":
+          description: Unauthorized - Invalid or expired token
+        "403":
+          description: Forbidden - User not authorized
         "404":
           description: Genres not found.
         "500":
@@ -681,6 +754,10 @@ paths:
                 type: array
                 items:
                   $ref: "#/components/schemas/Booking"
+        "401":
+          description: Unauthorized - Invalid or expired token
+        "403":
+          description: Forbidden - User not authorized
         "404":
           description: Bookings not found.
         "500":
@@ -707,6 +784,10 @@ paths:
                 $ref: "#/components/schemas/Booking"
         "400":
           description: Invalid input parameters
+        "401":
+          description: Unauthorized - Invalid or expired token
+        "403":
+          description: Forbidden - User not authorized
         "404":
           description: Movie show or cinema hall not found
         "409":
@@ -855,6 +936,9 @@ components:
           type: integer
           format: int64
           example: 200
+        available:
+          type: boolean
+          example : True
     MoviecinemaCreateResponse:
       type: object
       properties:
@@ -887,6 +971,9 @@ components:
     MoviecinemaHallCreateRequest:
       type: object
       properties:
+        hallId:
+          type: integer
+          example: 203
         name:
           type: string
           example: "Hall Name"
@@ -922,13 +1009,10 @@ components:
     MoviecinemaHallShowCreateRequest:
       type: object
       properties:
-        showId:
+        movieId:
           type: integer
           format: int64
           example: 666
-        name:
-          type: string
-          example: "Show name"
         timetable:
           type: integer
           format: date-time
