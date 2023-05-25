@@ -2,16 +2,18 @@ package com.uade.ad.service;
 
 import com.uade.ad.controller.dto.LoginDto;
 import com.uade.ad.model.ScreenspaceTest;
-import com.uade.ad.repository.DynamoDBRepository;
+import com.uade.ad.repository.LoginRepository;
 import org.springframework.stereotype.Service;
+
+import java.time.Instant;
 
 @Service
 public class LoginService {
 
-    final private DynamoDBRepository dynamoDBRepository;
+    final private LoginRepository loginRepository;
 
-    public LoginService(DynamoDBRepository dynamoDBRepository) {
-        this.dynamoDBRepository = dynamoDBRepository;
+    public LoginService(LoginRepository dynamoDBRepository) {
+        this.loginRepository = dynamoDBRepository;
     }
 
     public String login(LoginDto dto) {
@@ -20,7 +22,8 @@ public class LoginService {
 
     public String test() {
         ScreenspaceTest testt = ScreenspaceTest.builder()
-                .cost(1).definition("hola").build();
-        return dynamoDBRepository.save(testt);
+                .cost(1).definition("hola").instant(Instant.now()).build();
+        ScreenspaceTest saved = loginRepository.save(testt);
+        return saved.getId().toString();
     }
 }

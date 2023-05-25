@@ -10,7 +10,7 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 @OpenAPIDefinition(
 		info = @Info(title = "Screenspace API"),
 		servers = {
-				@Server(url = "http://localhost:5000"),
+				@Server(url = "http://localhost:8080"),
 				@Server(url = "http://screenspace-api.us-east-1.elasticbeanstalk.com")
 		}
 )
