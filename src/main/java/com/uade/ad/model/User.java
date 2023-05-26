@@ -1,41 +1,41 @@
 package com.uade.ad.model;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.Id;
-import jakarta.persistence.Table;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import jakarta.persistence.*;
+import lombok.*;
+
+import java.util.ArrayList;
+import java.util.List;
+
+@Data
+@AllArgsConstructor
+@NoArgsConstructor
 @Entity
 @Getter
 @Setter
-@NoArgsConstructor
-@Table(name = "usuarios")
+@Builder
+@Table(name = "users")
 public class User {
 
     @Id
-    private String id;
+    @Column(name = "id_user")
+    private String idUser;
     private String name;
     private String email;
     private String password;
     private String avatar;
+    @ManyToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+    @JoinTable(name = "user_roles", joinColumns = @JoinColumn(name = "user_id", referencedColumnName = "id_user")
+            , inverseJoinColumns = @JoinColumn(name = "role_id", referencedColumnName = "id_role"))
+    private List<Roles> roles = new ArrayList<>();
 
-    public User(String id, String name, String email, String password, String avatar) {
-        this.id = id;
-        this.name = name;
-        this.email = email;
-        this.password = password;
-        this.avatar = avatar;
-    }
-    public User(String id, String email, String password) {
-        this(id, "", email, password, "");
-    }
 
     public User toDto() {
         User user = new User();
-        user.setId(this.id);
+        user.setIdUser(this.idUser);
         user.setEmail(this.email);
+        user.setRoles(this.roles);
         return user;
     }
 
 }
+

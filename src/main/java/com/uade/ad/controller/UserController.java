@@ -4,7 +4,10 @@ import com.uade.ad.controller.dto.NewUserDto;
 import com.uade.ad.model.User;
 import com.uade.ad.service.UserService;
 import jakarta.validation.Valid;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequestMapping("/api/user")
@@ -14,9 +17,10 @@ public class UserController {
     public UserController(UserService userService) {
         this.userService = userService;
     }
+
     @PostMapping
     public User createUser(@RequestBody @Valid NewUserDto newUser) {
-        return userService.createUser(newUser.getEmail(),newUser.getPassword());
+        return userService.createUser(newUser.getEmail(), newUser.getPassword(),newUser.getRole());
     }
 
 }

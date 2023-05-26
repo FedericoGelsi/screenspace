@@ -18,4 +18,8 @@ public class NewUserDto {
     @NotBlank
     @Schema(example = "my-password", required = true)
     private String password;
+
+    @NotBlank
+    @Schema(example = "admin or client", required = true)
+    private String role;
 }
