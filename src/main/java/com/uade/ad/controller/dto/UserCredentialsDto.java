@@ -2,14 +2,10 @@ package com.uade.ad.controller.dto;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.NotBlank;
-import lombok.AllArgsConstructor;
 import lombok.Getter;
-import lombok.NoArgsConstructor;
 
 @Getter
-@NoArgsConstructor
-@AllArgsConstructor
-public class NewUserDto {
+public class UserCredentialsDto {
 
     @NotBlank
     @Schema(example = "user@mail.com", required = true)
@@ -19,7 +15,5 @@ public class NewUserDto {
     @Schema(example = "my-password", required = true)
     private String password;
 
-    @NotBlank
-    @Schema(example = "admin or client", required = true)
-    private String role;
+    private String tokenGoogle;
 }
