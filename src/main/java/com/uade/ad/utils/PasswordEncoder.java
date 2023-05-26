@@ -23,4 +23,9 @@ public class PasswordEncoder {
 
         return encryptedPassword;
     }
+
+    public static boolean comparePasswords(String userPassword, String encryptedPassword) {
+        String encryptedPlainPassword = encryptPassword(userPassword);
+        return encryptedPlainPassword.equals(encryptedPassword);
+    }
 }

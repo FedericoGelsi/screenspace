@@ -5,6 +5,7 @@ import com.uade.ad.repository.UserRepository;
 import com.uade.ad.utils.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.util.NoSuchElementException;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -25,6 +26,14 @@ public class UserService {
         email = email.toLowerCase();
         User newUser = userRepository.save(new User(UUID.randomUUID().toString(), email, password));
         return newUser.toDto();
+    }
+
+    public User findByUser(String email) {
+        Optional<User> user = userRepository.findUsersByEmail(email);
+        if (user.isEmpty()) {
+            throw new NoSuchElementException("User not found");
+        }
+        return user.get();
     }
 }
 
