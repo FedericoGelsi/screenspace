@@ -1,60 +1,75 @@
 package com.uade.ad.config;
 
 
-import com.uade.ad.security.JwtAuthenticationEntryPoint;
-import com.uade.ad.security.JwtAuthenticationFilter;
+import com.uade.ad.security.AuthSuccessHandler;
+import com.uade.ad.security.JsonObjectAuthenticationFilter;
+import com.uade.ad.security.JwtAuthorizationFilter;
+import com.uade.ad.security.JwtUserDetailsService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
+import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
-import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.http.SessionCreationPolicy;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
-import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.security.web.authentication.HttpStatusEntryPoint;
 
 @Configuration
-@EnableWebSecurity
 public class SecurityConfig {
-    private final JwtAuthenticationEntryPoint jwtAuthenticationEntryPoint;
+    private final AuthSuccessHandler authSuccessHandler;
+    private final JwtUserDetailsService jwtUserDetailsService;
+    private final String secret;
     @Autowired
-    public SecurityConfig(JwtAuthenticationEntryPoint jwtAuthenticationEntryPoint) {
-        this.jwtAuthenticationEntryPoint = jwtAuthenticationEntryPoint;
+    private AuthenticationManager authenticationManager;
+
+    public SecurityConfig(AuthSuccessHandler authSuccessHandler, JwtUserDetailsService jwtUserDetailsService, @Value("${jwt.secret}") String secret) {
+        this.authSuccessHandler = authSuccessHandler;
+        this.jwtUserDetailsService = jwtUserDetailsService;
+        this.secret = secret;
     }
+
     @Bean
-    AuthenticationManager authenticationManager(AuthenticationConfiguration authenticationConfiguration) throws Exception {
-        return authenticationConfiguration.getAuthenticationManager();
-    }
-    @Bean
-    PasswordEncoder passwordEncoder() {
-        return new BCryptPasswordEncoder();
-    }
-    @Bean
-    JwtAuthenticationFilter jwtAuthenticationFilter() {
-        return new JwtAuthenticationFilter();
-    }
-    @Bean
-    SecurityFilterChain filterChain(HttpSecurity http) throws Exception{
+    public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http
-                .csrf().disable()
-                .exceptionHandling()
-                .authenticationEntryPoint(jwtAuthenticationEntryPoint)
+                .cors()
                 .and()
-                .sessionManagement()
-                .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
-                .and()
-                .authorizeHttpRequests()
-                .requestMatchers("/api/auths/**").permitAll()
-                .requestMatchers("/api/user/**").permitAll()
-                //.requestMatchers(HttpMethod.GET,"/api/ejemplo").hasAnyAuthority("ADMIN" , "USER")
-                .anyRequest().authenticated()
-                .and()
-                .httpBasic();
-        http.addFilterBefore(jwtAuthenticationFilter(), UsernamePasswordAuthenticationFilter.class);
+                .csrf()
+                .disable()
+                .authorizeHttpRequests((auth) -> {
+                    try {
+                        auth
+                            .requestMatchers("/api/auths/**").permitAll()
+                            .requestMatchers("/api/user/**").permitAll()
+                            //.requestMatchers(HttpMethod.GET,"/api/ejemplo").hasAnyAuthority("ADMIN" , "USER")
+                            .anyRequest().permitAll()
+                            .and()
+                            .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
+                            .and()
+                            .formLogin()
+                            .loginProcessingUrl("/api/auths/login")
+                            .and()
+                            .addFilter(authenticationFilter())
+                            .addFilter(new JwtAuthorizationFilter(authenticationManager, jwtUserDetailsService, secret))
+                            .exceptionHandling()
+                            .authenticationEntryPoint(new HttpStatusEntryPoint(HttpStatus.UNAUTHORIZED));
+                } catch (Exception e) {
+                        throw new RuntimeException(e);
+                    }
+                })
+                .httpBasic(Customizer.withDefaults());
         return http.build();
     }
+
+    @Bean
+    public JsonObjectAuthenticationFilter authenticationFilter() throws Exception {
+        JsonObjectAuthenticationFilter filter = new JsonObjectAuthenticationFilter();
+        filter.setAuthenticationSuccessHandler(authSuccessHandler);
+        filter.setAuthenticationManager(authenticationManager);
+        return filter;
+    }
+
 }
 

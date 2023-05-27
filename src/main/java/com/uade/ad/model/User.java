@@ -2,40 +2,92 @@ package com.uade.ad.model;
 
 import jakarta.persistence.*;
 import lombok.*;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.Collection;
+import java.util.HashSet;
+import java.util.Set;
+import java.util.UUID;
 
 @Data
-@AllArgsConstructor
-@NoArgsConstructor
-@Entity
+@Table(name = "users")
+@EqualsAndHashCode(of = "uuid")
 @Getter
 @Setter
 @Builder
-@Table(name = "users")
-public class User {
+@NoArgsConstructor
+@AllArgsConstructor
+@Entity
+public class User implements UserDetails {
 
     @Id
-    @Column(name = "id_user")
-    private String idUser;
-    private String name;
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+
+    @Builder.Default
+    private String uuid = UUID.randomUUID().toString();
+
+    @Column
+    private String username;
+
+    @Column(unique = true)
     private String email;
+
+    @Column
     private String password;
-    private String avatar;
-    @ManyToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
-    @JoinTable(name = "user_roles", joinColumns = @JoinColumn(name = "user_id", referencedColumnName = "id_user")
-            , inverseJoinColumns = @JoinColumn(name = "role_id", referencedColumnName = "id_role"))
-    private List<Roles> roles = new ArrayList<>();
 
+    @Column
+    @Enumerated(EnumType.STRING)
+    @ElementCollection(fetch = FetchType.EAGER)
+    private Set<Role> role = new HashSet<>();
 
+    @Column
+    @Builder.Default
+    private boolean enabled = false;
+
+    @OneToOne(mappedBy = "user")
+    private RefreshToken refreshToken;
+
+    @Override
+    public Collection<? extends GrantedAuthority> getAuthorities() {
+        Set<GrantedAuthority> authorities = new HashSet<>();
+        for (var r : this.role) {
+            var sga = new SimpleGrantedAuthority(r.name());
+            authorities.add(sga);
+        }
+        return authorities;
+    }
+
+    @Override
+    public boolean isAccountNonExpired() {
+        return true;
+    }
+
+    @Override
+    public boolean isAccountNonLocked() {
+        return true;
+    }
+
+    @Override
+    public boolean isCredentialsNonExpired() {
+        return true;
+    }
+
+    @Override
+    public boolean isEnabled() {
+        return this.enabled;
+    }
     public User toDto() {
         User user = new User();
-        user.setIdUser(this.idUser);
+        user.setId(this.id);
         user.setEmail(this.email);
-        user.setRoles(this.roles);
+        user.setRole(this.role);
         return user;
     }
+
+
 
 }
 

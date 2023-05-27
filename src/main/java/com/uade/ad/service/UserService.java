@@ -1,28 +1,25 @@
 package com.uade.ad.service;
 
-import com.uade.ad.model.Roles;
+import com.uade.ad.model.Role;
 import com.uade.ad.model.User;
-import com.uade.ad.repository.RoleRepository;
 import com.uade.ad.repository.UserRepository;
+import jakarta.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import java.util.Collections;
 import java.util.NoSuchElementException;
 import java.util.Optional;
-import java.util.UUID;
+import java.util.Set;
 
 @Service
 public class UserService {
     private final UserRepository userRepository;
-    private final RoleRepository roleRepository;
     private final PasswordEncoder passwordEncoder;
 
     @Autowired
-    public UserService(UserRepository userRepository, RoleRepository roleRepository, PasswordEncoder passwordEncoder) {
+    public UserService(UserRepository userRepository, PasswordEncoder passwordEncoder) {
         this.userRepository = userRepository;
-        this.roleRepository = roleRepository;
         this.passwordEncoder = passwordEncoder;
     }
 
@@ -31,17 +28,26 @@ public class UserService {
             throw new IllegalArgumentException("Email in use");
         }
 
-        Roles roles = roleRepository.findByName(role.toLowerCase()).orElseThrow(() -> new IllegalArgumentException("Role not found"));
-
-        User newUser = User.builder()
-                .idUser(UUID.randomUUID().toString())
-                .email(email.toLowerCase())
-                .password(passwordEncoder.encode(password))
-                .roles(Collections.singletonList(roles))
-                .build();
+        User newUser = User.builder().email(email.toLowerCase()).password(passwordEncoder.encode(password)).role(Set.of(Role.ROLE_ADMIN, Role.ROLE_USER)).build();
 
         newUser = userRepository.save(newUser);
         return newUser.toDto();
+    }
+
+    public Optional<User> findJwtUserByEmail(String email) {
+        return userRepository.findUserByEmail(email);
+    }
+
+    public User getJwtUserByEmail(String email) {
+        return userRepository.findUserByEmail(email).orElseThrow(() -> new EntityNotFoundException("User not found by email!"));
+    }
+
+    public User getJwtUserByUsername(String username) {
+        return userRepository.findUserByUsername(username).orElseThrow(() -> new EntityNotFoundException("User not found by username!"));
+    }
+
+    public User save(User user) {
+        return userRepository.save(user);
     }
 
     public User findByUser(String email) {
