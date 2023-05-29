@@ -16,7 +16,7 @@ public class JwtUserDetailsService implements UserDetailsService {
 
     @Override
     public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
-        com.uade.ad.model.User user = jwtUserService.getJwtUserByEmail(email);
+        com.uade.ad.model.User user = jwtUserService.getUserByEmail(email);
 
         return new User(user.getUsername(), user.getPassword(), user.isEnabled(), true, true, true, user.getAuthorities());
     }

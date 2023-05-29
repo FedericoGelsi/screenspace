@@ -18,7 +18,7 @@ public class UserSeed implements CommandLineRunner {
 
     @Override
     public void run(String... args) throws Exception {
-        if (jwtUserService.findJwtUserByEmail("admin@test.com").isEmpty()) {
+        if (jwtUserService.findUserByEmail("admin@test.com").isEmpty()) {
             User u = jwtUserService.save(User.builder()
                     .username("Admin")
                     .email("admin@test.com")
@@ -28,7 +28,7 @@ public class UserSeed implements CommandLineRunner {
             u.setEnabled(true);
             jwtUserService.save(u);
         }
-        if (jwtUserService.findJwtUserByEmail("user@test.com").isEmpty()) {
+        if (jwtUserService.findUserByEmail("user@test.com").isEmpty()) {
             User u = jwtUserService.save(User.builder()
                     .username("User")
                     .email("user@test.com")

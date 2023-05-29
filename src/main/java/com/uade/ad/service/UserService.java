@@ -34,15 +34,15 @@ public class UserService {
         return newUser.toDto();
     }
 
-    public Optional<User> findJwtUserByEmail(String email) {
+    public Optional<User> findUserByEmail(String email) {
         return userRepository.findUserByEmail(email);
     }
 
-    public User getJwtUserByEmail(String email) {
+    public User getUserByEmail(String email) {
         return userRepository.findUserByEmail(email).orElseThrow(() -> new EntityNotFoundException("User not found by email!"));
     }
 
-    public User getJwtUserByUsername(String username) {
+    public User getUserByUsername(String username) {
         return userRepository.findUserByUsername(username).orElseThrow(() -> new EntityNotFoundException("User not found by username!"));
     }
 
@@ -50,12 +50,21 @@ public class UserService {
         return userRepository.save(user);
     }
 
-    public User findByUser(String email) {
+    public User findByEmail(String email) {
         Optional<User> user = userRepository.findUsersByEmail(email);
         if (user.isEmpty()) {
             throw new NoSuchElementException("User not found");
         }
         return user.get();
+    }
+
+    public void changePassword(String email, String newPassword) {
+        Optional<User> user = userRepository.findUsersByEmail(email);
+        if (user.isEmpty()) {
+            throw new NoSuchElementException("User not found");
+        }
+        user.get().setPassword(passwordEncoder.encode(newPassword));
+        userRepository.save(user.get());
     }
 }
 
