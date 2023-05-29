@@ -23,6 +23,7 @@ public class Cinema {
     private String localidad;
     private String provincia;
     private String pais;
-    @OneToMany(mappedBy = "cinema")
+    private Long ownedId;
+    @OneToMany(mappedBy = "cinema" , cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     private List<Hall> halls;
 }

@@ -21,6 +21,6 @@ public class Hall {
     private boolean available;
     @ManyToOne
     private Cinema cinema;
-    @OneToMany(mappedBy = "show")
+    @OneToMany(mappedBy = "show", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     private List<Show> shows;
 }
