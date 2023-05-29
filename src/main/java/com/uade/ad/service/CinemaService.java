@@ -47,4 +47,13 @@ public class CinemaService {
         BeanUtils.copyProperties(cinemaDTO,existingCinema,"id");
         return cinemaRepository.save(existingCinema);
     }
+
+    public boolean deleteCinemaById(Long id) {
+        Optional<Cinema> cinema = cinemaRepository.findById(id);
+        if (cinema.isPresent()) {
+            cinemaRepository.delete(cinema.get());
+            return true;
+        }
+        return false;
+    }
 }

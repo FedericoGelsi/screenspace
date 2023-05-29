@@ -41,4 +41,16 @@ public class CinemaController {
         return new ResponseEntity<>(updatedCinema,HttpStatus.OK);
     }
 
+    @GetMapping("/{id}")
+    public ResponseEntity<?> getCinemaById(@PathVariable("id") Long id){
+        Optional<Cinema> cinema = cinemaService.findById(id);
+        if(cinema.isEmpty()) return new ResponseEntity<>("Cinema not found.", HttpStatus.NOT_FOUND);
+        return new ResponseEntity<>(cinema,HttpStatus.OK);
+    }
+    @DeleteMapping("/{id}")
+    public ResponseEntity<?> deleteCinemaById(@PathVariable("id") Long id) {
+        boolean deleted = cinemaService.deleteCinemaById(id);
+        if (deleted) return new ResponseEntity<>("Cinema not found.", HttpStatus.NOT_FOUND);
+        return new ResponseEntity<>("Cinema successfully deleted!", HttpStatus.OK);
+    }
 }
