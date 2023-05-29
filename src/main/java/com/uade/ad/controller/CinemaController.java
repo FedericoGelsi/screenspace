@@ -1,16 +1,15 @@
 package com.uade.ad.controller;
 
+import com.uade.ad.controller.dto.CinemaUpdateDto;
 import com.uade.ad.model.Cinema;
 import com.uade.ad.service.CinemaService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Optional;
 
 @RestController
 @RequestMapping("/api/cinemas")
@@ -28,6 +27,18 @@ public class CinemaController {
         List<Cinema> cinemas = cinemaService.getAll(movieId,ownerID);
         if(cinemas.isEmpty()) return new ResponseEntity<>("Cinemas not found.", HttpStatus.NOT_FOUND);
         return new ResponseEntity<>(cinemas,HttpStatus.OK);
+    }
+
+    @PutMapping
+    public ResponseEntity<?> updateCinema(@RequestBody CinemaUpdateDto cinemaDTO) {
+
+        Optional<Cinema> existingCinema = cinemaService.findById(cinemaDTO.getId());
+        if (existingCinema.isEmpty()) {
+            return new ResponseEntity<>("Cinema not found.", HttpStatus.NOT_FOUND);
+        }
+
+        Cinema updatedCinema = cinemaService.updateCinema(cinemaDTO,existingCinema.get());
+        return new ResponseEntity<>(updatedCinema,HttpStatus.OK);
     }
 
 }
