@@ -18,6 +18,8 @@ public class Show {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long movieId;
     private Date datetime;
+    @ManyToOne
+    private Hall hall;
     @ElementCollection
     private ArrayList<String> availableSeats;
 
