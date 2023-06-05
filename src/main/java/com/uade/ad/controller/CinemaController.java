@@ -3,8 +3,10 @@ package com.uade.ad.controller;
 import com.uade.ad.controller.dto.CinemaCreateDto;
 import com.uade.ad.controller.dto.CinemaUpdateDto;
 import com.uade.ad.controller.dto.HallCreateDto;
+import com.uade.ad.controller.dto.ShowCreateDto;
 import com.uade.ad.model.Cinema;
 import com.uade.ad.model.Hall;
+import com.uade.ad.model.Show;
 import com.uade.ad.service.CinemaService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -78,7 +80,7 @@ public class CinemaController {
         }
     }
 
-    @PutMapping("/{cinemaId}/{hallId}")
+    @PutMapping("/{cinemaId}/halls/{hallId}")
     public ResponseEntity<?> updateHall(@PathVariable("cinemaId") Long cinemaId, @PathVariable("hallId") Long hallId, @RequestBody HallCreateDto hallDto) {
         try {
             Hall updateHall = cinemaService.updateHall(cinemaId, hallId, hallDto);
@@ -88,12 +90,22 @@ public class CinemaController {
         }
     }
 
-    @DeleteMapping("/{cinemaId}/{hallId}")
+    @DeleteMapping("/{cinemaId}/halls/{hallId}")
     public ResponseEntity<?> deleteHall(@PathVariable("cinemaId") Long cinemaId, @PathVariable("hallId") Long hallId) {
         try {
             boolean deleted = cinemaService.deleteHall(cinemaId, hallId);
             if (deleted) return new ResponseEntity<>("Hall not found.", HttpStatus.NOT_FOUND);
             return new ResponseEntity<>("Hall successfully deleted!", HttpStatus.OK);
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error creating hall: " + e.getMessage());
+        }
+    }
+
+    @PostMapping("/{cinemaId}/halls/{hallId}/shows")
+    public ResponseEntity<?> createShow(@PathVariable("cinemaId") Long cinemaId, @PathVariable("hallId") Long hallId, @RequestBody ShowCreateDto showDto) {
+        try {
+            Show createdShow = cinemaService.createShow(cinemaId,hallId,showDto);
+            return new ResponseEntity<>(createdShow.toDto(), HttpStatus.OK);
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error creating hall: " + e.getMessage());
         }

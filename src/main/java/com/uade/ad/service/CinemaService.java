@@ -3,8 +3,10 @@ package com.uade.ad.service;
 import com.uade.ad.controller.dto.CinemaCreateDto;
 import com.uade.ad.controller.dto.CinemaUpdateDto;
 import com.uade.ad.controller.dto.HallCreateDto;
+import com.uade.ad.controller.dto.ShowCreateDto;
 import com.uade.ad.model.Cinema;
 import com.uade.ad.model.Hall;
+import com.uade.ad.model.Show;
 import com.uade.ad.repository.CinemaRepository;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -121,5 +123,25 @@ public class CinemaService {
         cinemaRepository.save(cinema);
 
         return isDeleted;
+    }
+
+    public Show createShow(Long cinemaId, Long hallId, ShowCreateDto showDto) throws Exception {
+        Cinema cinema = cinemaRepository.findById(cinemaId)
+                .orElseThrow(() -> new Exception("Cinema not found."));
+
+        Hall hall = cinema.getHalls().stream()
+                .filter(x -> Objects.equals(x.getId(), hallId)).findFirst()
+                .orElseThrow(() -> new Exception("Hall not found."));
+
+        Show newShow = Show.builder()
+                .movieId(showDto.getMovieId())
+                .name(showDto.getName())
+                .datetime(showDto.getDatetime())
+                .build();
+        newShow.initSeats(hall.getHeight(),hall.getWidth());
+
+        hall.getShows().add(newShow);
+        cinemaRepository.save(cinema);
+        return newShow;
     }
 }

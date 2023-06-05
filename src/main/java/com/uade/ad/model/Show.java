@@ -16,8 +16,10 @@ import java.util.Date;
 public class Show {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
     private Long movieId;
     private Date datetime;
+    private String name;
     @ManyToOne
     private Hall hall;
     @ElementCollection
@@ -29,10 +31,10 @@ public class Show {
     * entonces de entrada estan todos disponibles, despues takeSeat lo eliminamos cuando
     * se hace una reserva
     * */
-    public void initSeats(int height, int length) {
+    public void initSeats(int height, int width) {
         this.availableSeats = new ArrayList<>();
         for (int i = 0; i < height; i++) {
-            for (int j = 0; j < length; j++) {
+            for (int j = 0; j < width; j++) {
                 char fila = (char) ('A' + i);
                 int numero = j + 1;
                 String seat = fila + String.valueOf(numero);
@@ -42,6 +44,15 @@ public class Show {
     }
     public void takeSeat(String seat) {
         this.availableSeats.remove(seat);
+    }
+
+    public Show toDto(){
+        return Show.builder()
+                .id(this.id)
+                .movieId(this.movieId)
+                .name(this.name)
+                .datetime(this.datetime)
+                .build();
     }
 }
 
