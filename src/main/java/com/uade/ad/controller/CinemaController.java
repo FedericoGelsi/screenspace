@@ -77,4 +77,25 @@ public class CinemaController {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error creating hall: " + e.getMessage());
         }
     }
+
+    @PutMapping("/{cinemaId}/{hallId}")
+    public ResponseEntity<?> updateHall(@PathVariable("cinemaId") Long cinemaId, @PathVariable("hallId") Long hallId, @RequestBody HallCreateDto hallDto) {
+        try {
+            Hall updateHall = cinemaService.updateHall(cinemaId, hallId, hallDto);
+            return new ResponseEntity<>(updateHall.toDto(), HttpStatus.OK);
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error creating hall: " + e.getMessage());
+        }
+    }
+
+    @DeleteMapping("/{cinemaId}/{hallId}")
+    public ResponseEntity<?> deleteHall(@PathVariable("cinemaId") Long cinemaId, @PathVariable("hallId") Long hallId) {
+        try {
+            boolean deleted = cinemaService.deleteHall(cinemaId, hallId);
+            if (deleted) return new ResponseEntity<>("Hall not found.", HttpStatus.NOT_FOUND);
+            return new ResponseEntity<>("Hall successfully deleted!", HttpStatus.OK);
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error creating hall: " + e.getMessage());
+        }
+    }
 }

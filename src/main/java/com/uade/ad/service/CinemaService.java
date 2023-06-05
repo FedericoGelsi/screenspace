@@ -99,4 +99,27 @@ public class CinemaService {
 
         return newHall;
     }
+
+    public Hall updateHall(Long cinemaId, Long hallId, HallCreateDto hallDto) throws Exception {
+        Cinema cinema = cinemaRepository.findById(cinemaId)
+                .orElseThrow(() -> new Exception("Cinema not found."));
+
+        Hall hallToUpdate = cinema.getHalls().stream()
+                .filter(x -> Objects.equals(x.getId(), hallId)).findFirst()
+                .orElseThrow(() -> new Exception("Hall not found."));
+
+        BeanUtils.copyProperties(hallDto, hallToUpdate, "id");
+        cinemaRepository.save(cinema);
+        return hallToUpdate;
+    }
+
+    public boolean deleteHall(Long cinemaId, Long hallId) throws Exception {
+        Cinema cinema = cinemaRepository.findById(cinemaId)
+                .orElseThrow(() -> new Exception("Cinema not found."));
+
+        boolean isDeleted = cinema.getHalls().removeIf(hall -> Objects.equals(hall.getId(), hallId));
+        cinemaRepository.save(cinema);
+
+        return isDeleted;
+    }
 }
