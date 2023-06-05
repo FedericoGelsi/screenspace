@@ -63,10 +63,10 @@ public class CinemaService {
         return false;
     }
 
-    public Cinema createCinema(Long userId, CinemaCreateDto cinemaDto) {
+    public Cinema createCinema(CinemaCreateDto cinemaDto) {
         Cinema newCinema = Cinema
                 .builder()
-                .ownedId(userId)
+                .ownedId(cinemaDto.getUserId())
                 .name(cinemaDto.getName())
                 .company(cinemaDto.getCompany())
                 .calle(cinemaDto.getCalle())

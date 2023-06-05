@@ -8,6 +8,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 public class CinemaCreateDto {
+    private Long userId;
     private String name;
     private String company;
     private String calle;

@@ -35,6 +35,7 @@
         public Cinema toDto() {
             Cinema cinema = new Cinema();
             cinema.setId(this.id);
+            cinema.setOwnedId(this.ownedId);
             cinema.setName(this.name);
             cinema.setCalle(this.calle);
             cinema.setNumero(this.numero);

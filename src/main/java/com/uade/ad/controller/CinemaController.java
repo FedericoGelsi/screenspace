@@ -50,7 +50,7 @@ public class CinemaController {
     public ResponseEntity<?> getCinemaById(@PathVariable("id") Long id) {
         Optional<Cinema> cinema = cinemaService.findById(id);
         if (cinema.isEmpty()) return new ResponseEntity<>("Cinema not found.", HttpStatus.NOT_FOUND);
-        return new ResponseEntity<>(cinema, HttpStatus.OK);
+        return new ResponseEntity<>(cinema.get(), HttpStatus.OK);
     }
 
     @DeleteMapping("/{id}")
@@ -60,10 +60,10 @@ public class CinemaController {
         return new ResponseEntity<>("Cinema successfully deleted!", HttpStatus.OK);
     }
 
-    @PostMapping("/{userId}")
-    public ResponseEntity<?> createCinema(@PathVariable("userId") Long userId, @RequestBody CinemaCreateDto cinemaDto) {
+    @PostMapping()
+    public ResponseEntity<?> createCinema(@RequestBody CinemaCreateDto cinemaDto) {
         try {
-            Cinema createdCinema = cinemaService.createCinema(userId, cinemaDto);
+            Cinema createdCinema = cinemaService.createCinema(cinemaDto);
             return new ResponseEntity<>(createdCinema.toDto(), HttpStatus.OK);
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error creating cinema: " + e.getMessage());

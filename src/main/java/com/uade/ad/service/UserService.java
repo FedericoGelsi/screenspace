@@ -1,9 +1,11 @@
 package com.uade.ad.service;
 
+import com.uade.ad.controller.dto.UserUpdateDto;
 import com.uade.ad.model.Role;
 import com.uade.ad.model.User;
 import com.uade.ad.repository.UserRepository;
 import jakarta.persistence.EntityNotFoundException;
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -65,6 +67,24 @@ public class UserService {
         }
         user.get().setPassword(passwordEncoder.encode(newPassword));
         userRepository.save(user.get());
+    }
+
+    public boolean deleteById(Long id) {
+        Optional<User> user = userRepository.findById(id);
+        if (user.isPresent()) {
+            userRepository.delete(user.get());
+            return true;
+        }
+        return false;
+    }
+
+    public Optional<User> findById(Long id) {
+        return userRepository.findById(id);
+    }
+
+    public User update(User user, UserUpdateDto userDto) {
+        BeanUtils.copyProperties(userDto,user);
+        return userRepository.save(user);
     }
 }
 

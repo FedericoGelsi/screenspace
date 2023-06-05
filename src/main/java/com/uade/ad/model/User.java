@@ -32,6 +32,9 @@ public class User implements UserDetails {
     @Column
     private String username;
 
+    @Column
+    private String avatar;
+
     @Column(unique = true)
     private String email;
 
