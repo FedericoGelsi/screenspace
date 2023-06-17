@@ -1,5 +1,6 @@
 package com.uade.ad.service;
 
+import com.google.maps.model.LatLng;
 import com.uade.ad.controller.dto.CinemaCreateDto;
 import com.uade.ad.controller.dto.CinemaUpdateDto;
 import com.uade.ad.controller.dto.HallCreateDto;
@@ -11,7 +12,6 @@ import com.uade.ad.repository.CinemaRepository;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-
 import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
@@ -23,10 +23,13 @@ public class CinemaService {
 
     private final CinemaRepository cinemaRepository;
 
+    private final MapService mapService;
+
     @Autowired
-    public CinemaService(CinemaRepository cinemaRepository) {
+    public CinemaService(CinemaRepository cinemaRepository, MapService mapService) {
 
         this.cinemaRepository = cinemaRepository;
+        this.mapService = mapService;
     }
 
     public List<Cinema> getAll(Long movieId, Long ownerId) {
@@ -50,7 +53,11 @@ public class CinemaService {
     }
 
     public Cinema updateCinema(CinemaUpdateDto cinemaDTO, Cinema existingCinema) {
+        LatLng coordinates = mapService.getLocationFromAddress(cinemaDTO.getCalle(), cinemaDTO.getNumero(),
+                cinemaDTO.getLocalidad(), cinemaDTO.getProvincia(), cinemaDTO.getPais());
         BeanUtils.copyProperties(cinemaDTO, existingCinema, "id");
+        existingCinema.setLatitude(coordinates.lat);
+        existingCinema.setLongitude(coordinates.lng);
         return cinemaRepository.save(existingCinema);
     }
 
@@ -64,6 +71,8 @@ public class CinemaService {
     }
 
     public Cinema createCinema(CinemaCreateDto cinemaDto) {
+        LatLng coordinates = mapService.getLocationFromAddress(cinemaDto.getCalle(), cinemaDto.getNumero(),
+                cinemaDto.getLocalidad(), cinemaDto.getProvincia(), cinemaDto.getPais());
         Cinema newCinema = Cinema
                 .builder()
                 .ownedId(cinemaDto.getUserId())
@@ -71,12 +80,11 @@ public class CinemaService {
                 .company(cinemaDto.getCompany())
                 .calle(cinemaDto.getCalle())
                 .numero(cinemaDto.getNumero())
-                .barrio(cinemaDto.getBarrio())
                 .localidad(cinemaDto.getLocalidad())
                 .provincia(cinemaDto.getProvincia())
                 .pais(cinemaDto.getPais())
-                .latitude(cinemaDto.getLatitude())
-                .longitude(cinemaDto.getLongitude())
+                .latitude(coordinates.lat)
+                .longitude(coordinates.lng)
                 .seatCosts(cinemaDto.getSeatCosts())
                 .available(cinemaDto.isAvailable())
                 .build();
