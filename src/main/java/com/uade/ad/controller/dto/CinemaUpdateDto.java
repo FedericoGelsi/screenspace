@@ -14,7 +14,6 @@ public class CinemaUpdateDto {
     private String name;
     private String calle;
     private String numero;
-    private String barrio;
     private String localidad;
     private String provincia;
     private String pais;
