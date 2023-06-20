@@ -39,11 +39,12 @@ public class CinemaService {
 
         if (movieId != null) {
             List<Cinema> cinemas = cinemaRepository.findAll();
-            return cinemas.stream()
+/*            return cinemas.stream()
                     .filter(cinema -> cinema.getHalls().stream()
                             .flatMap(hall -> hall.getShows().stream())
                             .anyMatch(show -> Objects.equals(show.getMovieId(), movieId)))
-                    .collect(Collectors.toList());
+                    .collect(Collectors.toList());*/
+            return null;
         }
         return Collections.emptyList();
     }
@@ -142,7 +143,7 @@ public class CinemaService {
                 .orElseThrow(() -> new Exception("Hall not found."));
 
         Show newShow = Show.builder()
-                .movieId(showDto.getMovieId())
+                //.movieId(showDto.getMovieId())
                 .name(showDto.getName())
                 .datetime(showDto.getDatetime())
                 .build();

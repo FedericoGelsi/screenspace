@@ -17,7 +17,8 @@ public class Show {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    private Long movieId;
+    @OneToOne
+    private Movie movie;
     private Date datetime;
     private String name;
     @ManyToOne
@@ -49,7 +50,7 @@ public class Show {
     public Show toDto(){
         return Show.builder()
                 .id(this.id)
-                .movieId(this.movieId)
+                .movie(this.movie)
                 .name(this.name)
                 .datetime(this.datetime)
                 .build();
