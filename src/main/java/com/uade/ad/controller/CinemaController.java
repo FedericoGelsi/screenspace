@@ -6,7 +6,7 @@ import com.uade.ad.controller.dto.HallCreateDto;
 import com.uade.ad.controller.dto.ShowCreateDto;
 import com.uade.ad.model.Cinema;
 import com.uade.ad.model.Hall;
-import com.uade.ad.model.Show;
+import com.uade.ad.model.CinemaShow;
 import com.uade.ad.service.CinemaService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -104,8 +104,8 @@ public class CinemaController {
     @PostMapping("/{cinemaId}/halls/{hallId}/shows")
     public ResponseEntity<?> createShow(@PathVariable("cinemaId") Long cinemaId, @PathVariable("hallId") Long hallId, @RequestBody ShowCreateDto showDto) {
         try {
-            Show createdShow = cinemaService.createShow(cinemaId,hallId,showDto);
-            return new ResponseEntity<>(createdShow.toDto(), HttpStatus.OK);
+            CinemaShow createdCinemaShow = cinemaService.createShow(cinemaId,hallId,showDto);
+            return new ResponseEntity<>(createdCinemaShow.toDto(), HttpStatus.OK);
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error creating hall: " + e.getMessage());
         }

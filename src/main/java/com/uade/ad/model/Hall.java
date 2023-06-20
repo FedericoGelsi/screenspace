@@ -25,7 +25,7 @@ public class Hall {
     @JsonBackReference
     private Cinema cinema;
     @OneToMany(mappedBy = "hall", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
-    private List<Show> shows;
+    private List<CinemaShow> cinemaShows;
 
     public Hall toDto(){
         Hall hall = new Hall();

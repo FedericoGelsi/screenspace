@@ -7,7 +7,7 @@ import com.uade.ad.controller.dto.HallCreateDto;
 import com.uade.ad.controller.dto.ShowCreateDto;
 import com.uade.ad.model.Cinema;
 import com.uade.ad.model.Hall;
-import com.uade.ad.model.Show;
+import com.uade.ad.model.CinemaShow;
 import com.uade.ad.repository.CinemaRepository;
 import com.uade.ad.repository.HallRepository;
 import org.springframework.beans.BeanUtils;
@@ -44,8 +44,8 @@ public class CinemaService {
             List<Cinema> cinemas = cinemaRepository.findAll();
             return cinemas.stream()
                     .filter(cinema -> cinema.getHalls().stream()
-                            .flatMap(hall -> hall.getShows().stream())
-                            .anyMatch(show -> Objects.equals(show.getMovieId(), movieId)))
+                            .flatMap(hall -> hall.getCinemaShows().stream())
+                            .anyMatch(cinemaShow -> Objects.equals(cinemaShow.getMovieId(), movieId)))
                     .collect(Collectors.toList());
         }
         return Collections.emptyList();
@@ -138,7 +138,7 @@ public class CinemaService {
         return isDeleted;
     }
 
-    public Show createShow(Long cinemaId, Long hallId, ShowCreateDto showDto) throws Exception {
+    public CinemaShow createShow(Long cinemaId, Long hallId, ShowCreateDto showDto) throws Exception {
         Cinema cinema = cinemaRepository.findById(cinemaId)
                 .orElseThrow(() -> new Exception("Cinema not found."));
 
@@ -146,15 +146,15 @@ public class CinemaService {
                 .filter(x -> Objects.equals(x.getId(), hallId)).findFirst()
                 .orElseThrow(() -> new Exception("Hall not found."));
 
-        Show newShow = Show.builder()
+        CinemaShow newCinemaShow = CinemaShow.builder()
                 .movieId(showDto.getMovieId())
                 .name(showDto.getName())
                 .datetime(showDto.getDatetime())
                 .build();
-        newShow.initSeats(hall.getHeight(),hall.getWidth());
+        newCinemaShow.initSeats(hall.getHeight(),hall.getWidth());
 
-        hall.getShows().add(newShow);
+        hall.getCinemaShows().add(newCinemaShow);
         cinemaRepository.save(cinema);
-        return newShow;
+        return newCinemaShow;
     }
 }
