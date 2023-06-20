@@ -9,7 +9,6 @@ import com.uade.ad.model.User;
 import com.uade.ad.repository.ResetCodeRepository;
 import com.uade.ad.service.RefreshTokenService;
 import com.uade.ad.service.UserService;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.mail.SimpleMailMessage;
@@ -28,13 +27,13 @@ public class AuthController {
     private final RefreshTokenService refreshTokenService;
     private final ResetCodeRepository resetCodeRepository;
     private final UserService userService;
-    @Autowired
-    private JavaMailSender mailSender;
+    private final JavaMailSender mailSender;
 
-    public AuthController(RefreshTokenService refreshTokenService, ResetCodeRepository resetCodeRepository, UserService userService) {
+    public AuthController(RefreshTokenService refreshTokenService, ResetCodeRepository resetCodeRepository, UserService userService, JavaMailSender mailSender) {
         this.refreshTokenService = refreshTokenService;
         this.resetCodeRepository = resetCodeRepository;
         this.userService = userService;
+        this.mailSender = mailSender;
     }
 
     @PostMapping("/refresh-token")
