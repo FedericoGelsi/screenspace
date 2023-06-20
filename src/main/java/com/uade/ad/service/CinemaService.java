@@ -9,6 +9,7 @@ import com.uade.ad.model.Cinema;
 import com.uade.ad.model.Hall;
 import com.uade.ad.model.Show;
 import com.uade.ad.repository.CinemaRepository;
+import com.uade.ad.repository.HallRepository;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -22,19 +23,21 @@ import java.util.stream.Collectors;
 public class CinemaService {
 
     private final CinemaRepository cinemaRepository;
+    private final HallRepository hallRepository;
 
     private final MapService mapService;
 
     @Autowired
-    public CinemaService(CinemaRepository cinemaRepository, MapService mapService) {
+    public CinemaService(CinemaRepository cinemaRepository, MapService mapService, HallRepository hallRepository) {
 
         this.cinemaRepository = cinemaRepository;
         this.mapService = mapService;
+        this.hallRepository = hallRepository;
     }
 
     public List<Cinema> getAll(Long movieId, Long ownerId) {
         if (ownerId != null) {
-            return cinemaRepository.findAllByOwnedId(ownerId);
+            return cinemaRepository.findAllByOwnerId(ownerId);
         }
 
         if (movieId != null) {
@@ -53,8 +56,8 @@ public class CinemaService {
     }
 
     public Cinema updateCinema(CinemaUpdateDto cinemaDTO, Cinema existingCinema) {
-        LatLng coordinates = mapService.getLocationFromAddress(cinemaDTO.getCalle(), cinemaDTO.getNumero(),
-                cinemaDTO.getLocalidad(), cinemaDTO.getProvincia(), cinemaDTO.getPais());
+        LatLng coordinates = mapService.getLocationFromAddress(cinemaDTO.getAddress(), cinemaDTO.getPostalCode(), cinemaDTO.getCity(),
+                cinemaDTO.getProvince(), cinemaDTO.getCountry());
         BeanUtils.copyProperties(cinemaDTO, existingCinema, "id");
         existingCinema.setLatitude(coordinates.lat);
         existingCinema.setLongitude(coordinates.lng);
@@ -71,22 +74,22 @@ public class CinemaService {
     }
 
     public Cinema createCinema(CinemaCreateDto cinemaDto) {
-        LatLng coordinates = mapService.getLocationFromAddress(cinemaDto.getCalle(), cinemaDto.getNumero(),
-                cinemaDto.getLocalidad(), cinemaDto.getProvincia(), cinemaDto.getPais());
+        LatLng coordinates = mapService.getLocationFromAddress(cinemaDto.getAddress(), cinemaDto.getPostalCode(), cinemaDto.getCity(),
+                cinemaDto.getProvince(), cinemaDto.getCountry());
         Cinema newCinema = Cinema
                 .builder()
-                .ownedId(cinemaDto.getUserId())
-                .name(cinemaDto.getName())
-                .company(cinemaDto.getCompany())
-                .calle(cinemaDto.getCalle())
-                .numero(cinemaDto.getNumero())
-                .localidad(cinemaDto.getLocalidad())
-                .provincia(cinemaDto.getProvincia())
-                .pais(cinemaDto.getPais())
+                .ownerId(cinemaDto.getUserId())
+                .cinemaName(cinemaDto.getCinemaName())
+                .companyName(cinemaDto.getCompanyName())
+                .address(cinemaDto.getAddress())
+                .postalCode(cinemaDto.getPostalCode())
+                .city(cinemaDto.getCity())
+                .province(cinemaDto.getProvince())
+                .country(cinemaDto.getCountry())
                 .latitude(coordinates.lat)
                 .longitude(coordinates.lng)
-                .seatCosts(cinemaDto.getSeatCosts())
-                .available(cinemaDto.isAvailable())
+                .pricePerShow(cinemaDto.getPricePerShow())
+                .active(cinemaDto.isActive())
                 .build();
         return cinemaRepository.save(newCinema);
     }
@@ -95,16 +98,18 @@ public class CinemaService {
         Cinema cinema = cinemaRepository.findById(cinemaId)
                 .orElseThrow(() -> new Exception("Cinema not found."));
 
-        List<Hall> halls = cinema.getHalls();
         Hall newHall = Hall
                 .builder()
                 .name(hallDto.getName())
                 .width(hallDto.getWidth())
                 .height(hallDto.getHeight())
                 .available(hallDto.isAvailable())
+                .cinema(cinema)
                 .build();
 
-        halls.add(newHall);
+        hallRepository.save(newHall);
+
+        cinema.getHalls().add(newHall);
         cinemaRepository.save(cinema);
 
         return newHall;

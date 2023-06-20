@@ -11,11 +11,14 @@ import lombok.NoArgsConstructor;
 public class CinemaUpdateDto {
     @NotBlank
     private Long id;
-    private String name;
-    private String calle;
-    private String numero;
-    private String localidad;
-    private String provincia;
-    private String pais;
+    private String cinemaName;
+    private String companyName;
+    private String address;
+    private String postalCode;
+    private String city;
+    private String province;
+    private String country;
+    private Integer pricePerShow;
+    private boolean active;
 
 }

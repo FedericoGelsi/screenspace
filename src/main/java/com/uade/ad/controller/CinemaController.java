@@ -56,7 +56,7 @@ public class CinemaController {
     @DeleteMapping("/{id}")
     public ResponseEntity<?> deleteCinemaById(@PathVariable("id") Long id) {
         boolean deleted = cinemaService.deleteCinemaById(id);
-        if (deleted) return new ResponseEntity<>("Cinema not found.", HttpStatus.NOT_FOUND);
+        if (!deleted) return new ResponseEntity<>("Cinema not found.", HttpStatus.NOT_FOUND);
         return new ResponseEntity<>("Cinema successfully deleted!", HttpStatus.OK);
     }
 
