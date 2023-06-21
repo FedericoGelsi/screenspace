@@ -19,6 +19,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.Optional;
+import java.util.Random;
 import java.util.UUID;
 
 @RestController
@@ -28,6 +29,7 @@ public class AuthController {
     private final ResetCodeRepository resetCodeRepository;
     private final UserService userService;
     private final JavaMailSender mailSender;
+    private final Random random = new Random();
 
     public AuthController(RefreshTokenService refreshTokenService, ResetCodeRepository resetCodeRepository, UserService userService, JavaMailSender mailSender) {
         this.refreshTokenService = refreshTokenService;
@@ -49,7 +51,7 @@ public class AuthController {
         email.setFrom("nuestroMail@gmail.com");
 
         ResetCode resetCode = new ResetCode();
-        resetCode.setResetCode(String.valueOf(UUID.randomUUID()));
+        resetCode.setResetCode(String.valueOf(random.nextInt(100000-10000) + 10000));
 
         email.setSubject("MoviesAPP : Reset your password.");
         email.setText("Verification code to reset password: " + resetCode.getResetCode());
