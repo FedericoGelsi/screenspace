@@ -1,5 +1,6 @@
 package com.uade.ad.model;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -21,9 +22,10 @@ public class Hall {
     private int width;
     private boolean available;
     @ManyToOne
+    @JsonBackReference
     private Cinema cinema;
     @OneToMany(mappedBy = "hall", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
-    private List<Show> shows;
+    private List<CinemaShow> cinemaShows;
 
     public Hall toDto(){
         Hall hall = new Hall();
@@ -33,5 +35,16 @@ public class Hall {
         hall.setWidth(this.width);
         hall.setAvailable(this.available);
         return hall;
+    }
+
+    @Override
+    public String toString() {
+        return "Hall{" +
+                "id=" + id +
+                ", name='" + name + '\'' +
+                ", height=" + height +
+                ", width=" + width +
+                ", available=" + available +
+                '}';
     }
 }

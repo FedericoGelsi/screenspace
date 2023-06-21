@@ -9,13 +9,13 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class CinemaCreateDto {
     private Long userId;
-    private String name;
-    private String company;
-    private String calle;
-    private String numero;
-    private String localidad;
-    private String provincia;
-    private String pais;
-    private Integer seatCosts;
-    private boolean available;
+    private String cinemaName;
+    private String companyName;
+    private String address;
+    private String postalCode;
+    private String city;
+    private String province;
+    private String country;
+    private Integer pricePerShow;
+    private boolean active;
 }

@@ -5,6 +5,7 @@ import lombok.*;
 
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 @Data
 @Getter
@@ -13,7 +14,7 @@ import java.util.Date;
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity
-public class Show {
+public class CinemaShow {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -24,7 +25,7 @@ public class Show {
     @ManyToOne
     private Hall hall;
     @ElementCollection
-    private ArrayList<String> availableSeats;
+    private List<String> availableSeats;
 
     /*
     * Por lo que vi podemos guardar todo como una cadena de texto
@@ -47,8 +48,8 @@ public class Show {
         this.availableSeats.remove(seat);
     }
 
-    public Show toDto(){
-        return Show.builder()
+    public CinemaShow toDto(){
+        return CinemaShow.builder()
                 .id(this.id)
                 .movie(this.movie)
                 .name(this.name)
