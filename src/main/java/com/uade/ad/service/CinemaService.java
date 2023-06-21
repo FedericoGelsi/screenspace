@@ -8,8 +8,10 @@ import com.uade.ad.controller.dto.ShowCreateDto;
 import com.uade.ad.model.Cinema;
 import com.uade.ad.model.Hall;
 import com.uade.ad.model.CinemaShow;
+import com.uade.ad.model.Movie;
 import com.uade.ad.repository.CinemaRepository;
 import com.uade.ad.repository.HallRepository;
+import com.uade.ad.repository.MovieRepository;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -25,29 +27,31 @@ public class CinemaService {
     private final CinemaRepository cinemaRepository;
     private final HallRepository hallRepository;
 
+    private final MovieRepository movieRepository;
+
     private final MapService mapService;
 
     @Autowired
-    public CinemaService(CinemaRepository cinemaRepository, MapService mapService, HallRepository hallRepository) {
+    public CinemaService(CinemaRepository cinemaRepository, MapService mapService, HallRepository hallRepository, MovieRepository movieRepository) {
 
         this.cinemaRepository = cinemaRepository;
         this.mapService = mapService;
         this.hallRepository = hallRepository;
+        this.movieRepository = movieRepository;
     }
 
-    public List<Cinema> getAll(Long movieId, Long ownerId) {
+    public List<Cinema> getAll(Integer movieId, Long ownerId) {
         if (ownerId != null) {
             return cinemaRepository.findAllByOwnerId(ownerId);
         }
 
         if (movieId != null) {
             List<Cinema> cinemas = cinemaRepository.findAll();
-/*            return cinemas.stream()
+            return cinemas.stream()
                     .filter(cinema -> cinema.getHalls().stream()
                             .flatMap(hall -> hall.getCinemaShows().stream())
-                            .anyMatch(cinemaShow -> Objects.equals(cinemaShow.getMovieId(), movieId)))
-                    .collect(Collectors.toList());*/
-            return null;
+                            .anyMatch(cinemaShow -> Objects.equals(cinemaShow.getMovie().getId(), movieId)))
+                    .collect(Collectors.toList());
         }
         return Collections.emptyList();
     }
@@ -147,8 +151,12 @@ public class CinemaService {
                 .filter(x -> Objects.equals(x.getId(), hallId)).findFirst()
                 .orElseThrow(() -> new Exception("Hall not found."));
 
+        Optional<Movie> movie = movieRepository.findById(showDto.getMovieId().intValue());
+
+        if (movie.isEmpty()) throw new Exception("Movie not found.");
+
         CinemaShow newCinemaShow = CinemaShow.builder()
-                // .movieId(showDto.getMovieId())
+                .movie(movie.get())
                 .name(showDto.getName())
                 .datetime(showDto.getDatetime())
                 .build();

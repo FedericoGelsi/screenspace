@@ -8,11 +8,10 @@ import com.uade.ad.model.User;
 import com.uade.ad.repository.GenreRepository;
 import com.uade.ad.repository.MovieRepository;
 import com.uade.ad.repository.ReviewRepository;
-import org.springframework.stereotype.Service;
-
 import java.time.Instant;
 import java.util.List;
 import java.util.Optional;
+import org.springframework.stereotype.Service;
 
 @Service
 public class MovieService {
