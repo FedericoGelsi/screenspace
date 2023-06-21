@@ -1,12 +1,10 @@
 package com.uade.ad.model;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.Id;
-import jakarta.persistence.OneToMany;
-import lombok.*;
-
+import jakarta.persistence.*;
 import java.util.Date;
-import java.util.List;
+import java.util.Set;
+
+import lombok.*;
 
 @Data
 @Getter
@@ -17,14 +15,17 @@ import java.util.List;
 @Entity
 public class Movie {
     @Id
-    private Long id;
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Integer id;
     private String title;
-    private Long duration;
+    private double duration;
     private String imageUrl;
-    @OneToMany
-    private List<Genre> genres;
+    @ManyToMany
+    private Set<Genre> genres;
     private String synopsis;
-    private Long rating;
+    private double rating;
     private boolean isShowing;
     private Date releaseDate;
+    @OneToMany(cascade = CascadeType.ALL)
+    private Set<Review> reviews;
 }

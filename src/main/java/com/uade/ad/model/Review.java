@@ -1,10 +1,9 @@
 package com.uade.ad.model;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.*;
 
-import java.util.List;
+import java.time.Instant;
 
 @Data
 @Getter
@@ -13,12 +12,13 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity
-public class Genre {
+public class Review {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
-    private String genre;
-    @ManyToMany
-    @JsonIgnore
-    private List<Movie> movies;
+    @ManyToOne
+    private User user;
+    private double rating;
+    private String comment;
+    private Instant date;
 }
