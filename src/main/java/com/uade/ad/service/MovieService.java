@@ -1,10 +1,7 @@
 package com.uade.ad.service;
 
 import com.uade.ad.controller.dto.ReviewCreateDto;
-import com.uade.ad.model.Genre;
-import com.uade.ad.model.Movie;
-import com.uade.ad.model.Review;
-import com.uade.ad.model.User;
+import com.uade.ad.model.*;
 import com.uade.ad.repository.GenreRepository;
 import com.uade.ad.repository.MovieRepository;
 import com.uade.ad.repository.ReviewRepository;
@@ -18,11 +15,15 @@ public class MovieService {
     private final GenreRepository genreRepository;
     private final MovieRepository movieRepository;
     private final ReviewRepository reviewRepository;
+    private final MapService mapService;
+    private final CinemaService cinemaService;
 
-    public MovieService(GenreRepository genreRepository, MovieRepository movieRepository, ReviewRepository reviewRepository) {
+    public MovieService(GenreRepository genreRepository, MovieRepository movieRepository, ReviewRepository reviewRepository, MapService mapService, CinemaService cinemaService) {
         this.genreRepository = genreRepository;
         this.movieRepository = movieRepository;
         this.reviewRepository = reviewRepository;
+        this.mapService = mapService;
+        this.cinemaService = cinemaService;
     }
 
     public List<Movie> getMoviesBy(Optional<String> cinema,

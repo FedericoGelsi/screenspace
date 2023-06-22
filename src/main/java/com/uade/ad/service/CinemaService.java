@@ -166,4 +166,40 @@ public class CinemaService {
         cinemaRepository.save(cinema);
         return newCinemaShow;
     }
+
+    public CinemaShow updateCinemaShow(Long cinemaId, Long hallId, Long showId, ShowCreateDto showDto) throws Exception {
+        Cinema cinema = cinemaRepository.findById(cinemaId)
+                .orElseThrow(() -> new Exception("Cinema not found."));
+
+        CinemaShow showToUpdate = cinema.getHalls().stream()
+                .filter(x -> Objects.equals(x.getId(), hallId)).findFirst()
+                .orElseThrow(() -> new Exception("Hall not found."))
+                .getCinemaShows().stream()
+                .filter(x -> Objects.equals(x.getId(), showId)).findFirst()
+                .orElseThrow(() -> new Exception("Show not found"));
+
+        BeanUtils.copyProperties(showDto, showToUpdate, "id");
+        cinemaRepository.save(cinema);
+        return showToUpdate;
+    }
+
+    public boolean deleteShow(Long cinemaId, Long hallId, Long showId) throws Exception {
+        Cinema cinema = cinemaRepository.findById(cinemaId)
+                .orElseThrow(() -> new Exception("Cinema not found."));
+        boolean isDeleted = false;
+        try {
+            cinema.getHalls().forEach(
+                    hall -> {
+                        hall.getCinemaShows().removeIf(show -> Objects.equals(show.getId(), showId));
+                    }
+            );
+            cinemaRepository.save(cinema);
+            isDeleted = true;
+        } catch (Exception e) {
+            throw new Exception("Show not deleted");
+        }
+
+        return isDeleted;
+
+    }
 }

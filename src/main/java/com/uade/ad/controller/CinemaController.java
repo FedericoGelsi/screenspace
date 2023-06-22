@@ -86,7 +86,7 @@ public class CinemaController {
             Hall updateHall = cinemaService.updateHall(cinemaId, hallId, hallDto);
             return new ResponseEntity<>(updateHall.toDto(), HttpStatus.OK);
         } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error creating hall: " + e.getMessage());
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error updating hall: " + e.getMessage());
         }
     }
 
@@ -97,7 +97,7 @@ public class CinemaController {
             if (deleted) return new ResponseEntity<>("Hall not found.", HttpStatus.NOT_FOUND);
             return new ResponseEntity<>("Hall successfully deleted!", HttpStatus.OK);
         } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error creating hall: " + e.getMessage());
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error deleting hall: " + e.getMessage());
         }
     }
 
@@ -107,7 +107,33 @@ public class CinemaController {
             CinemaShow createdCinemaShow = cinemaService.createShow(cinemaId,hallId,showDto);
             return new ResponseEntity<>(createdCinemaShow.toDto(), HttpStatus.OK);
         } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error creating hall: " + e.getMessage());
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error creating show: " + e.getMessage());
+        }
+    }
+
+    @PutMapping("/{cinemaId}/halls/{hallId}/shows/{showId}")
+    public ResponseEntity<?> updateShow(@PathVariable("cinemaId") Long cinemaId,
+                                        @PathVariable("hallId") Long hallId,
+                                        @PathVariable("showId") Long showId,
+                                        @RequestBody ShowCreateDto showDto) {
+        try {
+            CinemaShow updateShow = cinemaService.updateCinemaShow(cinemaId, hallId, showId, showDto);
+            return new ResponseEntity<>(updateShow.toDto(), HttpStatus.OK);
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error updating show: " + e.getMessage());
+        }
+    }
+
+    @DeleteMapping("/{cinemaId}/halls/{hallId}/shows/{showId}")
+    public ResponseEntity<?> deleteShow(@PathVariable("cinemaId") Long cinemaId,
+                                        @PathVariable("hallId") Long hallId,
+                                        @PathVariable("showId") Long showId) {
+        try {
+            boolean deleted = cinemaService.deleteShow(cinemaId, hallId, showId);
+            if (deleted) return new ResponseEntity<>("Show not found.", HttpStatus.NOT_FOUND);
+            return new ResponseEntity<>("Show successfully deleted!", HttpStatus.OK);
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error deleting show: " + e.getMessage());
         }
     }
 }
