@@ -47,7 +47,7 @@ public class AuthController {
         email.setFrom("nuestroMail@gmail.com");
 
         ResetCode resetCode = new ResetCode();
-        resetCode.setResetCode(String.valueOf(random.nextInt(100000-10000) + 10000));
+        resetCode.setResetCode(String.valueOf(random.nextInt(10000-1000) + 1000));
 
         email.setSubject("MoviesAPP : Reset your password.");
         email.setText("Verification code to reset password: " + resetCode.getResetCode());

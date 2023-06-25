@@ -1,5 +1,6 @@
 package com.uade.ad.model;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -23,6 +24,7 @@ public class CinemaShow {
     private Date datetime;
     private String name;
     @ManyToOne
+    @JsonBackReference
     private Hall hall;
     @ElementCollection
     private List<String> availableSeats;
