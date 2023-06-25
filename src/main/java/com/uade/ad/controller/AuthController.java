@@ -4,6 +4,7 @@ import com.uade.ad.controller.dto.*;
 import com.uade.ad.model.ResetCode;
 import com.uade.ad.model.User;
 import com.uade.ad.repository.ResetCodeRepository;
+import com.uade.ad.security.JwtUtils;
 import com.uade.ad.service.RefreshTokenService;
 import com.uade.ad.service.UserService;
 import org.springframework.http.HttpStatus;
@@ -26,12 +27,15 @@ public class AuthController {
     private final UserService userService;
     private final JavaMailSender mailSender;
     private final Random random = new Random();
+    private final JwtUtils jwtUtils;
 
-    public AuthController(RefreshTokenService refreshTokenService, ResetCodeRepository resetCodeRepository, UserService userService, JavaMailSender mailSender) {
+
+    public AuthController(RefreshTokenService refreshTokenService, ResetCodeRepository resetCodeRepository, UserService userService, JavaMailSender mailSender, JwtUtils jwtUtils) {
         this.refreshTokenService = refreshTokenService;
         this.resetCodeRepository = resetCodeRepository;
         this.userService = userService;
         this.mailSender = mailSender;
+        this.jwtUtils = jwtUtils;
     }
 
     @PostMapping("/refresh-token")
@@ -78,4 +82,9 @@ public class AuthController {
         }
     }
 
+    @PostMapping("/verify-token")
+    public ResponseEntity<Boolean> verifyToken(@RequestBody TokenVerificationRequestDto requestDto) {
+        boolean isValid = jwtUtils.isJwtValid(requestDto.getToken());
+        return new ResponseEntity<>(isValid, HttpStatus.OK);
+    }
 }
