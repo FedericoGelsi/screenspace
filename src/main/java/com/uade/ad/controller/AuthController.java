@@ -1,9 +1,6 @@
 package com.uade.ad.controller;
 
-import com.uade.ad.controller.dto.JwtRefreshRequestDto;
-import com.uade.ad.controller.dto.JwtResponseDto;
-import com.uade.ad.controller.dto.ResetPasswordDto;
-import com.uade.ad.controller.dto.VerifyCodeDto;
+import com.uade.ad.controller.dto.*;
 import com.uade.ad.model.ResetCode;
 import com.uade.ad.model.User;
 import com.uade.ad.repository.ResetCodeRepository;
@@ -20,7 +17,6 @@ import org.springframework.web.bind.annotation.RestController;
 
 import java.util.Optional;
 import java.util.Random;
-import java.util.UUID;
 
 @RestController
 @RequestMapping("/api/auths")
@@ -44,10 +40,10 @@ public class AuthController {
     }
 
     @PostMapping("/reset-password")
-    public ResponseEntity<?> sendEmailResetPassword(@RequestBody String emailUser) {
+    public ResponseEntity<?> sendEmailResetPassword(@RequestBody ResetPassEmailDto resetPasswordDto) {
         //TODO conexion con proveedor, me sale error de credenciales
         SimpleMailMessage email = new SimpleMailMessage();
-        email.setTo(emailUser);
+        email.setTo(resetPasswordDto.getEmail());
         email.setFrom("nuestroMail@gmail.com");
 
         ResetCode resetCode = new ResetCode();

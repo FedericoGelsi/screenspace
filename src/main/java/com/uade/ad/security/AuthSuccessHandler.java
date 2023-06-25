@@ -31,11 +31,15 @@ public class AuthSuccessHandler extends SimpleUrlAuthenticationSuccessHandler {
                                         Authentication authentication) throws IOException, ServletException {
         UserDetails principal = (UserDetails) authentication.getPrincipal();
         var user = userService.getUserByUsername(principal.getUsername());
+        var userId = user.getId();
+        var username = user.getUsername();
+        var email = user.getEmail();
         String token = jwtUtils.createJwt(user.getEmail());
-        String refreshToken = refreshTokenService.createToken(user);
+        //TODO REFRESH TOKEN
+        //String refreshToken = refreshTokenService.createToken(user);
         response.addHeader("Authorization", "Bearer " + token);
         response.addHeader("Content-Type", "application/json");
-        response.getWriter().write(objectMapper.writeValueAsString(JwtResponseDto.of(token, refreshToken)));
+        response.getWriter().write(objectMapper.writeValueAsString(JwtResponseDto.of(token,userId,username,email)));//, refreshToken)));
     }
 
 }
