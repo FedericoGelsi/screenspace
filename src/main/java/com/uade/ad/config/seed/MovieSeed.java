@@ -22,16 +22,16 @@ public class MovieSeed implements CommandLineRunner {
     @Override
     public void run(String... args) throws Exception {
         if(genreRepository.findAll().isEmpty()) {
-            Genre cienciaFiccion = Genre.builder().genre("Ciencia Ficcion").build();
-            Genre drama = Genre.builder().genre("Drama").build();
-            Genre policial = Genre.builder().genre("Policial").build();
-            Genre historico = Genre.builder().genre("Historico").build();
-            Genre comedia = Genre.builder().genre("Comedia").build();
-            Genre romance = Genre.builder().genre("Romance").build();
-            Genre horror = Genre.builder().genre("Horror").build();
-            Genre fantasia = Genre.builder().genre("Fantasia").build();
-            Genre crimen = Genre.builder().genre("Crimen").build();
-            Genre accion = Genre.builder().genre("Accion").build();
+            Genre cienciaFiccion = Genre.builder().genre("Science Fiction").genreSpanish("Ciencia Ficcion").build();
+            Genre drama = Genre.builder().genre("Drama").genreSpanish("Drama").build();
+            Genre policial = Genre.builder().genre("Mystery").genreSpanish("Policial").build();
+            Genre historico = Genre.builder().genre("Historical").genreSpanish("Historico").build();
+            Genre comedia = Genre.builder().genre("Comedy").genreSpanish("Comedia").build();
+            Genre romance = Genre.builder().genre("Romance").genreSpanish("Romance").build();
+            Genre horror = Genre.builder().genre("Horror").genreSpanish("Horror").build();
+            Genre fantasia = Genre.builder().genre("Fantasy").genreSpanish("Fantasia").build();
+            Genre crimen = Genre.builder().genre("Crime").genreSpanish("Crimen").build();
+            Genre accion = Genre.builder().genre("Action").genreSpanish("Accion").build();
 
             List<Genre> genres = List.of(cienciaFiccion, drama, policial, historico, comedia, romance,
                     horror, fantasia, crimen, accion);
@@ -42,76 +42,90 @@ public class MovieSeed implements CommandLineRunner {
 
             if (movieRepository.findAll().isEmpty()) {
                 Movie cadenaPerpetua = Movie.builder()
-                        .title("Cadena Perpetua")
+                        .title("The Shawshank Redemption")
+                        .titleSpanish("Cadena Perpetua")
                         .duration(142)
                         .imageUrl("https://pics.filmaffinity.com/the_shawshank_redemption-576140557-large.jpg")
                         .genres(Set.of(genres.get(1), genres.get(4)))
-                        .synopsis("Andy Dufresne es encarcelado por matar a su esposa y al amante de esta. Tras una dura adaptación, intenta mejorar las condiciones de la prisión y dar esperanza a sus compañeros.")
+                        .synopsis("Over the course of several years, two convicts form a friendship, seeking consolation and, eventually, redemption through basic compassion.")
+                        .synopsisSpanish("Andy Dufresne es encarcelado por matar a su esposa y al amante de esta. Tras una dura adaptación, intenta mejorar las condiciones de la prisión y dar esperanza a sus compañeros.")
                         .rating(4.8)
                         .isShowing(true)
                         .releaseDate(new Date(1994, 8, 30)).build();
 
                 Movie elPadrino = Movie.builder()
-                        .title("El Padrino")
+                        .title("The Godfather")
+                        .titleSpanish("El Padrino")
                         .duration(175)
                         .imageUrl("https://cdn.sincroguia.tv/uploads/programs/e/l/-/el-padrino-2981_SPA-85.jpg")
                         .genres(Set.of(genres.get(9), genres.get(1)))
-                        .synopsis("El envejecido patriarca de una dinastía del crimen organizado en la ciudad de Nueva York de la posguerra transfiere el control de su imperio clandestino a su reacio hijo menor.")
+                        .synopsis("Don Vito Corleone, head of a mafia family, decides to hand over his empire to his youngest son Michael. However, his decision unintentionally puts the lives of his loved ones in grave danger.")
+                        .synopsisSpanish("El envejecido patriarca de una dinastía del crimen organizado en la ciudad de Nueva York de la posguerra transfiere el control de su imperio clandestino a su reacio hijo menor.")
                         .rating(4.7)
                         .isShowing(true)
                         .releaseDate(new Date(1972, 5,25))
                         .build();
 
                 Movie elCaballeroOscuro = Movie.builder()
-                        .title("El Caballero Oscuro")
+                        .title("The Dark Knight")
+                        .titleSpanish("El Caballero Oscuro")
                         .duration(152)
                         .imageUrl("https://pics.filmaffinity.com/the_dark_knight-102763119-mmed.jpg")
                         .genres(Set.of(genres.get(1), genres.get(8), genres.get(9)))
-                        .synopsis("Cuando la amenaza conocida como el Joker causa estragos y el caos en Gotham City, Batman debe aceptar una de las mayores pruebas psicológicas y físicas para luchar contra la injusticia.")
+                        .synopsis("When the menace known as the Joker wreaks havoc and chaos on the people of Gotham, Batman must accept one of the greatest psychological and physical tests of his ability to fight injustice.")
+                        .synopsisSpanish("Cuando la amenaza conocida como el Joker causa estragos y el caos en Gotham City, Batman debe aceptar una de las mayores pruebas psicológicas y físicas para luchar contra la injusticia.")
                         .rating(4.7)
                         .isShowing(true)
                         .releaseDate(new Date(2008, 6,12))
                         .build();
 
                 Movie elPadrino2 = Movie.builder()
-                        .title("El padrino (parte II)")
+                        .title("The Godfather Part II")
+                        .titleSpanish("El padrino (parte II)")
                         .duration(202)
                         .imageUrl("https://pics.filmaffinity.com/El_padrino_Parte_II-617194725-large.jpg")
                         .genres(Set.of(genres.get(1), genres.get(8)))
-                        .synopsis("Se retratan los inicios de la vida y la carrera de Vito Corleone en el Nueva York de los años 20, mientras su hijo, Michael, amplía y refuerza su control sobre el sindicato del crimen familiar.")
+                        .synopsis("The early life and career of Vito Corleone in 1920s New York City is portrayed, while his son, Michael, expands and tightens his grip on the family crime syndicate.")
+                        .synopsisSpanish("Se retratan los inicios de la vida y la carrera de Vito Corleone en el Nueva York de los años 20, mientras su hijo, Michael, amplía y refuerza su control sobre el sindicato del crimen familiar.")
                         .rating(4.5)
                         .isShowing(true)
                         .releaseDate(new Date(1974, 9,15))
                         .build();
 
                 Movie doceHombresSinPiedad = Movie.builder()
-                        .title("12 hombres sin piedad")
+                        .title("12 Angry Men")
+                        .titleSpanish("12 hombres sin piedad")
                         .duration(96)
                         .imageUrl("https://upload.wikimedia.org/wikipedia/commons/thumb/b/b5/12_Angry_Men_%281957_film_poster%29.jpg/270px-12_Angry_Men_%281957_film_poster%29.jpg")
                         .genres(Set.of(genres.get(1), genres.get(8)))
-                        .synopsis("Un miembro del jurado trata de evitar un error judicial obligando al resto del jurado a reconsiderar las pruebas.")
+                        .synopsis("The jury in a New York City murder trial is frustrated by a single member whose skeptical caution forces them to more carefully consider the evidence before jumping to a hasty verdict.")
+                        .synopsisSpanish("Un miembro del jurado trata de evitar un error judicial obligando al resto del jurado a reconsiderar las pruebas.")
                         .rating(4.5)
                         .isShowing(true)
                         .releaseDate(new Date(1957, 4,10))
                         .build();
 
                 Movie laListaDeSchindler = Movie.builder()
-                        .title("La lista de Schindler")
+                        .title("Schindler's List")
+                        .titleSpanish("La lista de Schindler")
                         .duration(195)
                         .imageUrl("https://upload.wikimedia.org/wikipedia/en/3/38/Schindler%27s_List_movie.jpg")
                         .genres(Set.of(genres.get(1), genres.get(3)))
-                        .synopsis("En la Polonia ocupada por los alemanes durante la Segunda Guerra Mundial, el industrial Oskar Schindler se preocupa por sus trabajadores judíos tras presenciar su persecución por los nazis.")
+                        .synopsis("In German-occupied Poland during World War II, industrialist Oskar Schindler gradually becomes concerned for his Jewish workforce after witnessing their persecution by the Nazis.")
+                        .synopsisSpanish("En la Polonia ocupada por los alemanes durante la Segunda Guerra Mundial, el industrial Oskar Schindler se preocupa por sus trabajadores judíos tras presenciar su persecución por los nazis.")
                         .rating(4.4)
                         .isShowing(true)
                         .releaseDate(new Date(1993, 11,30))
                         .build();
 
                 Movie elSenorDeLosAnillosElRetornoDelRey = Movie.builder()
-                        .title("El señor de los anillos: El retorno del rey")
+                        .title("The Lord of the Rings: The Return of the King")
+                        .titleSpanish("El señor de los anillos: El retorno del rey")
                         .duration(201)
                         .imageUrl("https://upload.wikimedia.org/wikipedia/en/thumb/2/23/The_Lord_of_the_Rings%2C_TROTK_%282003%29.jpg/220px-The_Lord_of_the_Rings%2C_TROTK_%282003%29.jpg")
                         .genres(Set.of(genres.get(1), genres.get(7), genres.get(9)))
-                        .synopsis("Gandalf y Aragorn lideran el mundo de los hombres contra la armada de Sauron para distraer su atención de Frodo y Sam, quienes se aproximan al Monte del Destino con el Anillo Único.")
+                        .synopsis("Gandalf and Aragorn lead the World of Men against Sauron's army to draw his gaze from Frodo and Sam as they approach Mount Doom with the One Ring.")
+                        .synopsisSpanish("Gandalf y Aragorn lideran el mundo de los hombres contra la armada de Sauron para distraer su atención de Frodo y Sam, quienes se aproximan al Monte del Destino con el Anillo Único.")
                         .rating(4.3)
                         .isShowing(true)
                         .releaseDate(new Date(2003, 12,17))
@@ -119,32 +133,38 @@ public class MovieSeed implements CommandLineRunner {
 
                 Movie pulpFiction = Movie.builder()
                         .title("Pulp Fiction")
+                        .titleSpanish("Pulp Fiction")
                         .duration(154)
                         .imageUrl("https://upload.wikimedia.org/wikipedia/en/3/3b/Pulp_Fiction_%281994%29_poster.jpg")
                         .genres(Set.of(genres.get(1), genres.get(8), genres.get(5)))
-                        .synopsis("Las vidas de dos mafiosos, un boxeador, la esposa de un gánster y un par de bandidos se entrelazan en cuatro historias de violencia y redención.")
+                        .synopsis("The lives of two mob hitmen, a boxer, a gangster and his wife, and a pair of diner bandits intertwine in four tales of violence and redemption.")
+                        .synopsisSpanish("Las vidas de dos mafiosos, un boxeador, la esposa de un gánster y un par de bandidos se entrelazan en cuatro historias de violencia y redención.")
                         .rating(4.2)
                         .isShowing(true)
                         .releaseDate(new Date(1994, 10,14))
                         .build();
 
                 Movie elSenorDeLosAnillosLaComunidadDelAnillo = Movie.builder()
-                        .title("El señor de los anillos: La comunidad del anillo")
+                        .title("The Lord of the Rings: The Fellowship of the Ring")
+                        .titleSpanish("El señor de los anillos: La comunidad del anillo")
                         .duration(178)
                         .imageUrl("https://upload.wikimedia.org/wikipedia/en/thumb/8/8a/The_Lord_of_the_Rings%2C_TFOTR_%282001%29.jpg/220px-The_Lord_of_the_Rings%2C_TFOTR_%282001%29.jpg")
                         .genres(Set.of(genres.get(1), genres.get(7), genres.get(9)))
-                        .synopsis("Un hobbit de la Comarca y ocho compañeros emprenden un viaje para destruir el poderoso Anillo Único y salvar la Tierra Media del Señor Oscuro Sauron.")
+                        .synopsis("A meek Hobbit from the Shire and eight companions set out on a journey to destroy the powerful One Ring and save Middle-earth from the Dark Lord Sauron.")
+                        .synopsisSpanish("Un hobbit de la Comarca y ocho compañeros emprenden un viaje para destruir el poderoso Anillo Único y salvar la Tierra Media del Señor Oscuro Sauron.")
                         .rating(4.1)
                         .isShowing(true)
                         .releaseDate(new Date(2001, 12,10))
                         .build();
 
                 Movie elBuenoElFeoYElMalo = Movie.builder()
-                        .title("El bueno, el feo y el malo")
+                        .title("The Good, the Bad and the Ugly")
+                        .titleSpanish("El bueno, el feo y el malo")
                         .duration(182)
                         .imageUrl("https://upload.wikimedia.org/wikipedia/en/thumb/4/45/Good_the_bad_and_the_ugly_poster.jpg/220px-Good_the_bad_and_the_ugly_poster.jpg")
                         .genres(Set.of(genres.get(2), genres.get(6)))
-                        .synopsis("Durante la Guerra de Secesión, tres cazarrecompensas se lanzan a la búsqueda de un tesoro que ninguno puede localizar sin la ayuda de los otros dos.")
+                        .synopsis("A bounty hunting scam joins two men in an uneasy alliance against a third in a race to find a fortune in gold buried in a remote cemetery.")
+                        .synopsisSpanish("Durante la Guerra de Secesión, tres cazarrecompensas se lanzan a la búsqueda de un tesoro que ninguno puede localizar sin la ayuda de los otros dos.")
                         .rating(4.0)
                         .isShowing(true)
                         .releaseDate(new Date(1966, 12,23))

@@ -18,14 +18,24 @@ public class Movie {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
     private String title;
+    private String titleSpanish;
     private double duration;
     private String imageUrl;
     @ManyToMany
     private Set<Genre> genres;
     private String synopsis;
+    private String synopsisSpanish;
     private double rating;
     private boolean isShowing;
     private Date releaseDate;
     @OneToMany(cascade = CascadeType.ALL)
     private Set<Review> reviews;
+
+    public String getTitle(final String language){
+        return "en".equals(language) ? title : titleSpanish;
+    }
+
+    public String getSynopsis(final String language) {
+        return "en".equals(language) ? synopsis : synopsisSpanish;
+    }
 }

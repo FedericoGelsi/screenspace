@@ -18,7 +18,12 @@ public class Genre {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
     private String genre;
+    private String genreSpanish;
     @ManyToMany
     @JsonIgnore
     private List<Movie> movies;
+
+    public String getGenre(final String language) {
+        return "en".equals(language) ? genre : genreSpanish;
+    }
 }

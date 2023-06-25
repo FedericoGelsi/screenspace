@@ -1,5 +1,7 @@
 package com.uade.ad.controller;
 
+import com.uade.ad.controller.dto.GenreResponseDto;
+import com.uade.ad.controller.dto.MovieResponseDto;
 import com.uade.ad.controller.dto.ReviewCreateDto;
 import com.uade.ad.model.Genre;
 import com.uade.ad.model.Movie;
@@ -33,9 +35,10 @@ public class MovieController {
                                        @RequestParam Optional<Double> latitude, @RequestParam Optional<Double> longitude,
                                        @RequestParam Optional<String> title,
                                        @RequestParam Optional<String> genre,
-                                       @RequestParam Optional<Double> rating) {
+                                       @RequestParam Optional<Double> rating,
+                                       @RequestParam(defaultValue = "en") String language) {
         try {
-            List<Movie> movies = movieService.getMoviesBy(cinema, latitude, longitude, title, genre, rating);
+            List<MovieResponseDto> movies = movieService.getMoviesBy(cinema, latitude, longitude, title, genre, rating, language);
             if (movies.isEmpty()) return new ResponseEntity<>("Movies.", HttpStatus.NOT_FOUND);
             return new ResponseEntity<>(movies, HttpStatus.OK);
         } catch (Exception e) {
@@ -61,9 +64,9 @@ public class MovieController {
     }
 
     @GetMapping("/{movieId}")
-    public ResponseEntity<?> getMovieById(@PathVariable Integer movieId) {
+    public ResponseEntity<?> getMovieById(@PathVariable Integer movieId, @RequestParam(defaultValue = "en") String language) {
         try {
-            Optional<Movie> movie = movieService.findById(movieId);
+            Optional<MovieResponseDto> movie = movieService.findById(movieId, language);
             if (movie.isEmpty()) return new ResponseEntity<>("Movie not found.", HttpStatus.NOT_FOUND);
             return new ResponseEntity<>(movie.get(), HttpStatus.OK);
         } catch (Exception e) {
@@ -72,9 +75,9 @@ public class MovieController {
     }
 
     @GetMapping("/genres")
-    public ResponseEntity<?> getGenres() {
+    public ResponseEntity<?> getGenres(@RequestParam(defaultValue = "en") String language) {
         try {
-            List<Genre> genres = movieService.getGenres();
+            List<GenreResponseDto> genres = movieService.getGenres(language);
             return new ResponseEntity<>(genres, HttpStatus.OK);
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error retrieving genres: " + e.getMessage());
