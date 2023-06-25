@@ -48,7 +48,7 @@ public class User implements UserDetails {
 
     @Column
     @Builder.Default
-    private boolean enabled = false;
+    private boolean enabled = true;
 
     @OneToOne(mappedBy = "user")
     private RefreshToken refreshToken;

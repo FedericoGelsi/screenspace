@@ -30,7 +30,7 @@ public class UserService {
             throw new IllegalArgumentException("Email in use");
         }
 
-        User newUser = User.builder().email(email.toLowerCase()).password(passwordEncoder.encode(password)).role(Set.of(Role.ROLE_ADMIN, Role.ROLE_USER)).build();
+        User newUser = User.builder().username(email.toLowerCase()).email(email.toLowerCase()).password(passwordEncoder.encode(password)).role(Set.of(Role.ROLE_ADMIN, Role.ROLE_USER)).build();
 
         newUser = userRepository.save(newUser);
         return newUser.toDto();
