@@ -1,6 +1,7 @@
 package com.uade.ad.model;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -21,10 +22,11 @@ public class Hall {
     private int height;
     private int width;
     private boolean available;
-    @ManyToOne
+    @ManyToOne(cascade = CascadeType.PERSIST)
     @JsonBackReference
     private Cinema cinema;
     @OneToMany(mappedBy = "hall", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+    @JsonManagedReference
     private List<CinemaShow> cinemaShows;
 
     public Hall toDto(){
