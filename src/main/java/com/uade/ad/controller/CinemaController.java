@@ -94,7 +94,7 @@ public class CinemaController {
     public ResponseEntity<?> deleteHall(@PathVariable("cinemaId") Long cinemaId, @PathVariable("hallId") Long hallId) {
         try {
             boolean deleted = cinemaService.deleteHall(cinemaId, hallId);
-            if (deleted) return new ResponseEntity<>("Hall not found.", HttpStatus.NOT_FOUND);
+            if (!deleted) return new ResponseEntity<>("Hall not found.", HttpStatus.NOT_FOUND);
             return new ResponseEntity<>("Hall successfully deleted!", HttpStatus.OK);
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error deleting hall: " + e.getMessage());
@@ -130,7 +130,7 @@ public class CinemaController {
                                         @PathVariable("showId") Long showId) {
         try {
             boolean deleted = cinemaService.deleteShow(cinemaId, hallId, showId);
-            if (deleted) return new ResponseEntity<>("Show not found.", HttpStatus.NOT_FOUND);
+            if (!deleted) return new ResponseEntity<>("Show not found.", HttpStatus.NOT_FOUND);
             return new ResponseEntity<>("Show successfully deleted!", HttpStatus.OK);
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error deleting show: " + e.getMessage());

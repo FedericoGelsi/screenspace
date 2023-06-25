@@ -6,4 +6,5 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface HallRepository extends JpaRepository<Hall, Long> {
+    Long deleteHallById(final Long hallId);
 }
