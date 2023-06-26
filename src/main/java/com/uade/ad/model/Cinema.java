@@ -31,7 +31,7 @@
         private Integer pricePerShow;
         private boolean active;
         private Long ownerId;
-        @OneToMany(mappedBy = "cinema" , cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+        @OneToMany(mappedBy = "cinema" , cascade = CascadeType.ALL, fetch = FetchType.LAZY)
         @Fetch(FetchMode.SUBSELECT)
         @JsonManagedReference
         private List<Hall> halls;
