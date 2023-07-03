@@ -29,7 +29,7 @@ public class MovieController {
     }
 
     @GetMapping
-    public ResponseEntity<?> getMovies(@RequestParam Optional<String> cinema,
+    public ResponseEntity<?> getMovies(@RequestParam Optional<Long> cinema,
                                        @RequestParam Optional<Double> latitude, @RequestParam Optional<Double> longitude,
                                        @RequestParam Optional<String> title,
                                        @RequestParam Optional<String> genre,

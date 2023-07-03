@@ -5,7 +5,10 @@ import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
+import java.util.Objects;
 
 @Data
 @Getter
@@ -48,5 +51,24 @@ public class Hall {
                 ", width=" + width +
                 ", available=" + available +
                 '}';
+    }
+
+    public List<Movie> getMoviesInTheaters() {
+        List<Movie> movies = new ArrayList<>();
+        for (CinemaShow cinemaShow : cinemaShows) {
+            movies.add(cinemaShow.getMovie());
+        }
+        return movies;
+    }
+
+    public boolean containsMovieInTheather(Integer movieId) {
+        boolean isMovieInTheater = false;
+        for (CinemaShow cinemaShow : cinemaShows) {
+            if(Objects.equals(cinemaShow.getMovie().getId(), movieId)) {
+                isMovieInTheater = true;
+                break;
+            }
+        }
+        return isMovieInTheater && available;
     }
 }
