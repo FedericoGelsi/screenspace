@@ -28,4 +28,8 @@ public class Movie {
     private Date releaseDate;
     @OneToMany(cascade = CascadeType.ALL)
     private Set<Review> reviews;
+
+    public boolean containsGenre(final String genreTitle) {
+        return genres.stream().anyMatch(genre -> genre.getGenre().equalsIgnoreCase(genreTitle));
+    }
 }

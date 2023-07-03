@@ -2,10 +2,12 @@ package com.uade.ad.service;
 
 import com.uade.ad.controller.dto.ReviewCreateDto;
 import com.uade.ad.model.*;
+import com.uade.ad.repository.CinemaRepository;
 import com.uade.ad.repository.GenreRepository;
 import com.uade.ad.repository.MovieRepository;
 import com.uade.ad.repository.ReviewRepository;
 import java.time.Instant;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import org.springframework.stereotype.Service;
@@ -16,22 +18,31 @@ public class MovieService {
     private final MovieRepository movieRepository;
     private final ReviewRepository reviewRepository;
     private final MapService mapService;
-    private final CinemaService cinemaService;
+    private final CinemaRepository cinemaRepository;
 
-    public MovieService(GenreRepository genreRepository, MovieRepository movieRepository, ReviewRepository reviewRepository, MapService mapService, CinemaService cinemaService) {
+    public MovieService(GenreRepository genreRepository,
+                        MovieRepository movieRepository,
+                        ReviewRepository reviewRepository,
+                        MapService mapService,
+                        CinemaRepository cinemaRepository) {
         this.genreRepository = genreRepository;
         this.movieRepository = movieRepository;
         this.reviewRepository = reviewRepository;
         this.mapService = mapService;
-        this.cinemaService = cinemaService;
+        this.cinemaRepository = cinemaRepository;
     }
 
-    public List<Movie> getMoviesBy(Optional<String> cinema,
+    public List<Movie> getMoviesBy(Optional<Long> cinema,
                                    Optional<Double> latitude, Optional<Double> longitude,
                                    Optional<String> title,
                                    Optional<String> genre,
                                    Optional<Double> rating) {
-        // TODO Agregar filtros
+
+        if (cinema.isPresent()) return filterMoviesByCinema(cinema.get());
+        if (latitude.isPresent() && longitude.isPresent()) return filterMoviesByDistance(latitude.get(), longitude.get());
+        if (title.isPresent()) return filterMoviesByTitle(title.get());
+        if (genre.isPresent()) return filterMoviesByGenre(genre.get());
+        if (rating.isPresent()) return filterMoviesByRating(rating.get());
         return movieRepository.findAll();
     }
 
@@ -66,5 +77,35 @@ public class MovieService {
         return genreRepository.findAll();
     }
 
+    private List<Movie> filterMoviesByCinema(final Long cinemaId) {
+        List<Movie> movies = new ArrayList<>();
+        Optional<Cinema> cinemaOpt = cinemaRepository.findById(cinemaId);
+        cinemaOpt.ifPresent(cinema -> movies.addAll(cinema.getMoviesInTheaters()));
+        return movies;
+    }
 
+    private List<Movie> filterMoviesByDistance(final double latitude, final double longitude) {
+        List<Cinema> cinemas = cinemaRepository.findAll();
+        List<Movie> movies = new ArrayList<>();
+        for(Cinema cinema : cinemas) {
+            if(mapService.calculateDistance(cinema.getLatitude(), cinema.getLongitude(), latitude, longitude) < 3000) {
+                movies.addAll(cinema.getMoviesInTheaters());
+            }
+        }
+        return movies;
+    }
+
+    private List<Movie> filterMoviesByTitle(final String title) {
+        return movieRepository.findMoviesByTitleContainingIgnoreCase(title);
+    }
+
+    private List<Movie> filterMoviesByGenre(final String genre) {
+        List<Movie> movies = movieRepository.findAll();
+        movies.removeIf(movie -> !movie.containsGenre(genre));
+        return movies;
+    }
+
+    private List<Movie> filterMoviesByRating(final double rating) {
+        return movieRepository.findMoviesByRatingGreaterThanEqual(rating);
+    }
 }

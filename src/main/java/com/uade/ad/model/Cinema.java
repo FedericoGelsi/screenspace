@@ -6,6 +6,7 @@
     import org.hibernate.annotations.Fetch;
     import org.hibernate.annotations.FetchMode;
 
+    import java.util.ArrayList;
     import java.util.List;
 
     @Data
@@ -47,5 +48,24 @@
             cinema.setProvince(this.province);
             cinema.setCountry(this.country);
             return cinema;
+        }
+
+        public List<Movie> getMoviesInTheaters() {
+            List<Movie> movies = new ArrayList<>();
+            for(Hall hall : halls) {
+                movies.addAll(hall.getMoviesInTheaters());
+            }
+            return movies;
+        }
+
+        public boolean containsMovieInTheather(final Integer movieId) {
+            boolean isMovieInTheater = false;
+            for(Hall hall : halls) {
+                if(hall.containsMovieInTheather(movieId)) {
+                    isMovieInTheater = true;
+                    break;
+                }
+            }
+            return isMovieInTheater && active;
         }
     }
