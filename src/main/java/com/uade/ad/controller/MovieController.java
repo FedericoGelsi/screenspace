@@ -31,11 +31,12 @@ public class MovieController {
     @GetMapping
     public ResponseEntity<?> getMovies(@RequestParam Optional<Long> cinema,
                                        @RequestParam Optional<Double> latitude, @RequestParam Optional<Double> longitude,
+                                       @RequestParam Optional<Double> distance,
                                        @RequestParam Optional<String> title,
                                        @RequestParam Optional<String> genre,
                                        @RequestParam Optional<Double> rating) {
         try {
-            List<Movie> movies = movieService.getMoviesBy(cinema, latitude, longitude, title, genre, rating);
+            List<Movie> movies = movieService.getMoviesBy(cinema, latitude, longitude, distance, title, genre, rating);
             if (movies.isEmpty()) return new ResponseEntity<>("Movies.", HttpStatus.NOT_FOUND);
             return new ResponseEntity<>(movies, HttpStatus.OK);
         } catch (Exception e) {

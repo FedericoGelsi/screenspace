@@ -59,7 +59,7 @@ public class CinemaService {
                             .anyMatch(cinemaShow -> Objects.equals(cinemaShow.getMovie().getId(), movieId)))
                     .collect(Collectors.toList());
         }
-        return Collections.emptyList();
+        return cinemaRepository.findAll();
     }
 
     public Optional<Cinema> findById(Long id) {

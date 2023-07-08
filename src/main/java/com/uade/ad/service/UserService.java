@@ -1,15 +1,25 @@
 package com.uade.ad.service;
 
+import com.google.api.client.googleapis.auth.oauth2.GoogleIdToken;
+import com.google.api.client.googleapis.auth.oauth2.GoogleIdTokenVerifier;
+import com.google.api.client.googleapis.javanet.GoogleNetHttpTransport;
+import com.google.api.client.json.gson.GsonFactory;
 import com.uade.ad.controller.dto.UserUpdateDto;
 import com.uade.ad.model.Role;
 import com.uade.ad.model.User;
 import com.uade.ad.repository.UserRepository;
+import com.uade.ad.security.JwtUtils;
 import jakarta.persistence.EntityNotFoundException;
+import org.apache.commons.lang3.tuple.Triple;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.io.IOException;
+import java.security.GeneralSecurityException;
+import java.util.Collections;
 import java.util.NoSuchElementException;
 import java.util.Optional;
 import java.util.Set;
@@ -18,11 +28,47 @@ import java.util.Set;
 public class UserService {
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
+    private final GoogleIdTokenVerifier googleVerifier;
+    private final JwtUtils jwtUtils;
+
+    @Value("${google.oauth.client-id")
+    private String clientId;
 
     @Autowired
-    public UserService(UserRepository userRepository, PasswordEncoder passwordEncoder) {
+    public UserService(UserRepository userRepository, PasswordEncoder passwordEncoder, JwtUtils jwtUtils)
+            throws GeneralSecurityException, IOException {
         this.userRepository = userRepository;
         this.passwordEncoder = passwordEncoder;
+        this.jwtUtils = jwtUtils;
+        this.googleVerifier = new GoogleIdTokenVerifier
+                .Builder(GoogleNetHttpTransport.newTrustedTransport(), new GsonFactory())
+                .setAudience(Collections.singletonList(clientId))
+                .build();
+    }
+
+
+    public Triple<User, String, Boolean> googleAuthentication(String googleTokenId) {
+        try {
+            GoogleIdToken token = googleVerifier.verify(googleTokenId);
+            GoogleIdToken.Payload payload = token.getPayload();
+            Optional<User> optional = userRepository.findUserByEmail(payload.getEmail());
+            User user = null;
+            if (optional.isEmpty()) {
+                User newUser = User.builder()
+                        .username(payload.getEmail())
+                        .email(payload.getEmail())
+                        .avatar((String) payload.get("picture"))
+                        .role(Set.of(Role.ROLE_ADMIN, Role.ROLE_USER))
+                        .build();
+                user = userRepository.save(newUser);
+            } else {
+                user = optional.get();
+            }
+            boolean isNewUser = optional.isEmpty();
+            return Triple.of(user, jwtUtils.createJwt(user.getEmail()), isNewUser);
+        } catch (Exception e) {
+            throw new IllegalArgumentException(e);
+        }
     }
 
     public User createUser(String email, String password, String role) {
@@ -30,7 +76,12 @@ public class UserService {
             throw new IllegalArgumentException("Email in use");
         }
 
-        User newUser = User.builder().username(email.toLowerCase()).email(email.toLowerCase()).password(passwordEncoder.encode(password)).role(Set.of(Role.ROLE_ADMIN, Role.ROLE_USER)).build();
+        User newUser = User.builder()
+                .username(email.toLowerCase())
+                .email(email.toLowerCase())
+                .password(passwordEncoder.encode(password))
+                .role(Set.of(Role.ROLE_ADMIN, Role.ROLE_USER))
+                .build();
 
         newUser = userRepository.save(newUser);
         return newUser.toDto();
