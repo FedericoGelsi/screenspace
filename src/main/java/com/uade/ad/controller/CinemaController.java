@@ -30,7 +30,7 @@ public class CinemaController {
     @GetMapping
     public ResponseEntity<?> getAllCinemas(@RequestParam(required = false) Integer movieId, @RequestParam(required = false) Long ownerID) {
         List<Cinema> cinemas = cinemaService.getAll(movieId, ownerID);
-        if (cinemas.isEmpty()) return new ResponseEntity<>("Cinemas not found.", HttpStatus.NOT_FOUND);
+        // if (cinemas.isEmpty()) return new ResponseEntity<>("Cinemas not found.", HttpStatus.NOT_FOUND);
         return new ResponseEntity<>(cinemas, HttpStatus.OK);
     }
 

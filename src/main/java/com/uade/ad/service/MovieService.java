@@ -34,12 +34,13 @@ public class MovieService {
 
     public List<Movie> getMoviesBy(Optional<Long> cinema,
                                    Optional<Double> latitude, Optional<Double> longitude,
+                                   Optional<Double> distance,
                                    Optional<String> title,
                                    Optional<String> genre,
                                    Optional<Double> rating) {
 
         if (cinema.isPresent()) return filterMoviesByCinema(cinema.get());
-        if (latitude.isPresent() && longitude.isPresent()) return filterMoviesByDistance(latitude.get(), longitude.get());
+        if (latitude.isPresent() && longitude.isPresent() && distance.isPresent()) return filterMoviesByDistance(latitude.get(), longitude.get(), distance.get());
         if (title.isPresent()) return filterMoviesByTitle(title.get());
         if (genre.isPresent()) return filterMoviesByGenre(genre.get());
         if (rating.isPresent()) return filterMoviesByRating(rating.get());
@@ -84,11 +85,11 @@ public class MovieService {
         return movies;
     }
 
-    private List<Movie> filterMoviesByDistance(final double latitude, final double longitude) {
+    private List<Movie> filterMoviesByDistance(final double latitude, final double longitude, final double distance) {
         List<Cinema> cinemas = cinemaRepository.findAll();
         List<Movie> movies = new ArrayList<>();
         for(Cinema cinema : cinemas) {
-            if(mapService.calculateDistance(cinema.getLatitude(), cinema.getLongitude(), latitude, longitude) < 3000) {
+            if(mapService.calculateDistance(cinema.getLatitude(), cinema.getLongitude(), latitude, longitude) < distance * 1000) {
                 movies.addAll(cinema.getMoviesInTheaters());
             }
         }

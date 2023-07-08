@@ -1,10 +1,13 @@
 package com.uade.ad.controller;
 
 import com.uade.ad.controller.dto.NewUserDto;
+import com.uade.ad.controller.dto.OAuthUserDto;
 import com.uade.ad.controller.dto.UserUpdateDto;
 import com.uade.ad.model.User;
+import com.uade.ad.security.JwtUtils;
 import com.uade.ad.service.UserService;
 import jakarta.validation.Valid;
+import org.apache.commons.lang3.tuple.Triple;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -16,7 +19,7 @@ import java.util.Optional;
 public class UserController {
     private final UserService userService;
 
-    public UserController(UserService userService) {
+    public UserController(UserService userService, JwtUtils jwtUtils) {
         this.userService = userService;
     }
 
@@ -28,6 +31,22 @@ public class UserController {
             return new ResponseEntity<>(user.get(), HttpStatus.OK);
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error creating user: " + e.getMessage());
+        }
+    }
+
+    @PostMapping("/oauth")
+    public ResponseEntity<?> googleAuthentication(@RequestBody String googleTokenId) {
+        try {
+            Triple<User, String, Boolean> result = userService.googleAuthentication(googleTokenId);
+            return new ResponseEntity<>(
+                    OAuthUserDto.builder()
+                            .user(result.getLeft())
+                            .jwt(result.getMiddle())
+                            .isNewUser(result.getRight())
+                            .build(),
+                    HttpStatus.OK);
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error authenticating user: " + e.getMessage());
         }
     }
 
