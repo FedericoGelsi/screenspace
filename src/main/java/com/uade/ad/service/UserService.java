@@ -31,9 +31,6 @@ public class UserService {
     private final GoogleIdTokenVerifier googleVerifier;
     private final JwtUtils jwtUtils;
 
-    @Value("${google.oauth.client-id")
-    private String clientId;
-
     @Autowired
     public UserService(UserRepository userRepository, PasswordEncoder passwordEncoder, JwtUtils jwtUtils)
             throws GeneralSecurityException, IOException {
@@ -42,7 +39,7 @@ public class UserService {
         this.jwtUtils = jwtUtils;
         this.googleVerifier = new GoogleIdTokenVerifier
                 .Builder(GoogleNetHttpTransport.newTrustedTransport(), new GsonFactory())
-                .setAudience(Collections.singletonList(clientId))
+                .setAudience(Collections.singletonList("954758489890-k2vos57qjf8nk1hrqpaeee7us9p65l4u.apps.googleusercontent.com"))
                 .build();
     }
 
