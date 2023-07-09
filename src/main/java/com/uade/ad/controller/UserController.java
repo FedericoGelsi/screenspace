@@ -64,7 +64,7 @@ public class UserController {
     public ResponseEntity<?> deleteUser(@PathVariable("id") Long id) {
         try {
             boolean deleted = userService.deleteById(id);
-            if (deleted) return new ResponseEntity<>("User not found.", HttpStatus.NOT_FOUND);
+            if (!deleted) return new ResponseEntity<>("User not found.", HttpStatus.NOT_FOUND);
             return new ResponseEntity<>("User successfully deleted!", HttpStatus.OK);
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error creating user: " + e.getMessage());
