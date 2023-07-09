@@ -1,5 +1,6 @@
     package com.uade.ad.model;
 
+    import com.fasterxml.jackson.annotation.JsonIgnore;
     import com.fasterxml.jackson.annotation.JsonManagedReference;
     import jakarta.persistence.*;
     import lombok.*;
@@ -50,6 +51,7 @@
             return cinema;
         }
 
+        @JsonIgnore
         public List<Movie> getMoviesInTheaters() {
             List<Movie> movies = new ArrayList<>();
             for(Hall hall : halls) {
