@@ -1,16 +1,14 @@
 package com.uade.ad.controller;
 
 import com.uade.ad.controller.dto.BookingRequestDto;
-import com.uade.ad.controller.dto.ReviewCreateDto;
-import com.uade.ad.model.*;
+import com.uade.ad.controller.dto.BookingResponseDto;
+import com.uade.ad.model.Booking;
 import com.uade.ad.service.BookingService;
-import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-import java.util.Objects;
 import java.util.Optional;
 
 @RestController
@@ -25,7 +23,7 @@ public class BookingController {
 
     @GetMapping("/{userId}")
     public ResponseEntity<?> getBookingById(@PathVariable Integer userId) {
-        List<Booking> bookings = bookingService.getBookingById(userId);
+        List<BookingResponseDto> bookings = bookingService.getBookingById(userId);
         return new ResponseEntity<>(bookings, HttpStatus.OK);
     }
 

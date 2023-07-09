@@ -1,13 +1,18 @@
 package com.uade.ad.service;
 
 import com.uade.ad.controller.dto.BookingRequestDto;
+import com.uade.ad.controller.dto.BookingResponseDto;
 import com.uade.ad.model.Booking;
+import com.uade.ad.model.Cinema;
 import com.uade.ad.model.CinemaShow;
+import com.uade.ad.model.Hall;
 import com.uade.ad.repository.BookingRepository;
 import com.uade.ad.repository.CinemaShowRepository;
+import com.uade.ad.repository.HallRepository;
 import jakarta.transaction.Transactional;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.Random;
@@ -22,15 +27,37 @@ public class BookingService {
 
     private final CinemaShowRepository cinemaShowRepository;
     private final BookingRepository bookingRepository;
+    private final HallRepository hallRepository;
 
     public BookingService(CinemaShowRepository cinemaShowRepository,
-                          BookingRepository bookingRepository) {
+                          BookingRepository bookingRepository, HallRepository hallRepository) {
         this.cinemaShowRepository = cinemaShowRepository;
         this.bookingRepository = bookingRepository;
+        this.hallRepository = hallRepository;
     }
 
-    public List<Booking> getBookingById(Integer userId) {
-        return bookingRepository.findAllByUserId(userId);
+    public List<BookingResponseDto> getBookingById(Integer userId) {
+        List<BookingResponseDto> result = new ArrayList<>();
+       List<Booking> bookings = bookingRepository.findAllByUserId(userId);
+        for (Booking book: bookings) {
+            Optional<Hall> hall = hallRepository.findById(book.getHallId());
+            Cinema cinema = hall.get().getCinema();
+            Integer price =  cinema.getPricePerShow();
+            String name = cinema.getCinemaName();
+            BookingResponseDto dto = BookingResponseDto.builder()
+                    .id(book.getId())
+                    .bookingCode(book.getBookingCode())
+                    .userId(book.getUserId())
+                    .movie(book.getMovie())
+                    .hallId(book.getHallId())
+                    .timetable(book.getTimetable())
+                    .seats(book.getSeats())
+                    .cinemaName(name)
+                    .pricePerSeat(price)
+                    .build();
+            result.add(dto);
+        }
+        return result;
     }
 
     @Transactional
