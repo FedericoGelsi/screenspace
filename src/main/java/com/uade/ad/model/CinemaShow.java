@@ -46,8 +46,8 @@ public class CinemaShow {
             }
         }
     }
-    public void takeSeat(String seat) {
-        this.availableSeats.remove(seat);
+    public boolean takeSeat(String seat) {
+        return this.availableSeats.remove(seat);
     }
 
     public CinemaShow toDto(){
