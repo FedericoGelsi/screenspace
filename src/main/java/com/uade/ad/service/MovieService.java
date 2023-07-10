@@ -78,7 +78,7 @@ public class MovieService {
         return genreRepository.findAll();
     }
 
-    private List<Movie> filterMoviesByCinema(final Long cinemaId) {
+    public List<Movie> filterMoviesByCinema(final Long cinemaId) {
         List<Movie> movies = new ArrayList<>();
         Optional<Cinema> cinemaOpt = cinemaRepository.findById(cinemaId);
         cinemaOpt.ifPresent(cinema -> movies.addAll(cinema.getMoviesInTheaters()));
@@ -96,17 +96,17 @@ public class MovieService {
         return movies;
     }
 
-    private List<Movie> filterMoviesByTitle(final String title) {
+    public List<Movie> filterMoviesByTitle(final String title) {
         return movieRepository.findMoviesByTitleContainingIgnoreCase(title);
     }
 
-    private List<Movie> filterMoviesByGenre(final String genre) {
+    public List<Movie> filterMoviesByGenre(final String genre) {
         List<Movie> movies = movieRepository.findAll();
         movies.removeIf(movie -> !movie.containsGenre(genre));
         return movies;
     }
 
-    private List<Movie> filterMoviesByRating(final double rating) {
+    public List<Movie> filterMoviesByRating(final double rating) {
         return movieRepository.findMoviesByRatingGreaterThanEqual(rating);
     }
 }
