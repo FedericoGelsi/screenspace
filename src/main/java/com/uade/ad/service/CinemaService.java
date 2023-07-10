@@ -244,6 +244,11 @@ public class CinemaService {
 
         for (Movie movie : movies){
             List<Cinema> cinemasList = getCinemasByMovieId(movie.getId());
+            cinemasList.forEach(cinema -> {
+                cinema.getHalls().forEach(hall -> {
+                    hall.getCinemaShows().removeIf(cinemaShow -> !(cinemaShow.getMovie().getId().equals(movie.getId())));
+                });
+            });
             filteredCinemas.addAll(cinemasList);
         }
 
