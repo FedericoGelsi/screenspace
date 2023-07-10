@@ -17,10 +17,8 @@ import jakarta.transaction.Transactional;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import java.util.Collections;
-import java.util.List;
-import java.util.Objects;
-import java.util.Optional;
+
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
@@ -30,6 +28,7 @@ public class CinemaService {
     private final HallRepository hallRepository;
     private final CinemaShowRepository cinemaShowRepository;
     private final MovieRepository movieRepository;
+    private final MovieService movieService;
     private final MapService mapService;
 
     @Autowired
@@ -37,12 +36,13 @@ public class CinemaService {
                          MapService mapService,
                          HallRepository hallRepository,
                          CinemaShowRepository cinemaShowRepository,
-                         MovieRepository movieRepository) {
+                         MovieRepository movieRepository, MovieService movieService) {
         this.cinemaRepository = cinemaRepository;
         this.mapService = mapService;
         this.hallRepository = hallRepository;
         this.cinemaShowRepository = cinemaShowRepository;
         this.movieRepository = movieRepository;
+        this.movieService = movieService;
     }
 
     @Transactional
@@ -223,4 +223,24 @@ public class CinemaService {
         return isDeletedFromHall && deletedCinemaShowById > 0;
 
     }
+
+    public List<Cinema> getAllFilter(Optional<Double> latitude, Optional<Double> longitude, Optional<Double> distance, Optional<String> genre, Optional<Double> rating) {
+        if (latitude.isPresent() && longitude.isPresent() && distance.isPresent()) return filterCinemaByDistance(latitude.get(), longitude.get(), distance.get());
+        if (genre.isPresent()) return filterCinemaByMovieGenre(genre.get());
+        if (rating.isPresent()) return filterMoviesByRating(rating.get());
+        return cinemaRepository.findAll();
+    }
+
+    private List<Cinema> filterCinemaByDistance(final double latitude, final double longitude, final double distance) {
+        List<Cinema> cinemas = cinemaRepository.findAll();
+        List<Cinema> cinemasResponse = new ArrayList<>();
+        for(Cinema cinema : cinemas) {
+            if(mapService.calculateDistance(cinema.getLatitude(), cinema.getLongitude(), latitude, longitude) < distance * 1000) {
+                cinemasResponse.add(cinema);
+            }
+        }
+        return cinemasResponse;
+    }
+
+
 }

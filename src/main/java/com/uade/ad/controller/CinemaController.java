@@ -34,6 +34,16 @@ public class CinemaController {
         return new ResponseEntity<>(cinemas, HttpStatus.OK);
     }
 
+    @GetMapping
+    public ResponseEntity<?> getAllCinemasFilter(
+                                                 @RequestParam Optional<Double> latitude, @RequestParam Optional<Double> longitude,
+                                                 @RequestParam Optional<Double> distance,
+                                                 @RequestParam Optional<String> genre,
+                                                 @RequestParam Optional<Double> rating){
+        List<Cinema> cinemas = cinemaService.getAllFilter(latitude, longitude, distance, genre, rating);
+        return new ResponseEntity<>(cinemas, HttpStatus.OK);
+    }
+
     @PutMapping
     public ResponseEntity<?> updateCinema(@RequestBody CinemaUpdateDto cinemaDTO) {
 
